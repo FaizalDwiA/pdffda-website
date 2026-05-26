@@ -3,19 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Client-Side PDF Utility Suite</title>
-    <script type="module" crossorigin src="./assets/index-CKeSbY7p.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BcfiS5vH.css">
+    <title>PDFFDA - Client-Side PDF Utility Suite</title>
+    <script type="module" crossorigin src="./assets/index-B8zfNakb.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DCnse-Iz.css">
   </head>
   <body class="min-h-screen bg-[#0c111d] text-white font-sans flex flex-col antialiased relative overflow-x-hidden">
 
     <!-- Background Mesh Gradients -->
-    <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-900/15 rounded-full blur-[120px] pointer-events-none z-0"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-900/15 rounded-full blur-[100px] pointer-events-none z-0"></div>
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-900/15 rounded-full blur-[120px]"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-900/15 rounded-full blur-[100px]"></div>
+    </div>
 
     <!-- Header / Nav -->
     <header id="app-header" class="bg-black/40 backdrop-blur-md border-b border-white/10 sticky top-0 z-40 shadow-lg relative">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <div class="bg-blue-600 text-white p-1.5 rounded-lg flex items-center justify-center shadow-md shadow-blue-900/30">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -23,42 +25,42 @@
             </svg>
           </div>
           <div>
-            <h1 class="text-sm font-bold text-white tracking-widest leading-none uppercase">PDF <span class="text-blue-400">Pro</span> Workspace</h1>
-            <p class="text-[9px] text-white/40 font-semibold uppercase mt-0.5">100% Client-Side &amp; Privacy-First</p>
+            <h1 class="text-sm font-bold text-white tracking-widest leading-none uppercase">PDF<span class="text-blue-400">FDA</span></h1>
+            <p class="text-[9px] text-white/40 font-semibold uppercase mt-0.5 animate-pulse">100% Client-Side &amp; Privacy-First</p>
           </div>
         </div>
         <div class="flex items-center space-x-3">
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-mono font-semibold bg-white/5 text-emerald-400 border border-emerald-500/20 shadow-xs">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-white/5 text-emerald-400 border border-emerald-500/20 shadow-xs">
             <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
-            Mode: Offline / Aman
+            <span class="hidden sm:inline">Mode: </span>Offline / Aman
           </span>
         </div>
       </div>
     </header>
 
     <!-- Main Container -->
-    <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col space-y-6 relative z-10">
+    <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col space-y-4 sm:space-y-6 relative z-10">
       
       <!-- Brief Description Header -->
-      <div id="welcome-message" class="bg-gradient-to-r from-blue-950/40 to-indigo-950/40 backdrop-blur-xl border border-white/10 text-white rounded-2xl p-6 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative overflow-hidden">
+      <div id="welcome-message" class="bg-gradient-to-r from-blue-950/40 to-indigo-950/40 backdrop-blur-xl border border-white/10 text-white rounded-2xl p-5 sm:p-6 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative overflow-hidden">
         <div class="absolute inset-0 bg-blue-500/5 mix-blend-color-dodge pointer-events-none"></div>
         <div class="space-y-1 relative z-10">
-          <h2 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+          <h2 class="text-sm sm:text-base md:text-lg font-bold tracking-tight text-white flex items-center gap-2">
             <span class="inline-block w-2.5 h-2.5 bg-blue-500 rounded-full animate-ping shrink-0"></span>
             Kompilasi &amp; Modifikasi PDF Instan Tanpa Server
           </h2>
           <p class="text-xs text-white/60 max-w-2xl leading-relaxed">Semua file diproses secara lokal langsung di peramban Anda. Dokumen rahasia Anda tidak akan pernah diunggah ke internet atau server mana pun demi privasi penuh.</p>
         </div>
-        <div class="flex items-center space-x-3 self-start md:self-auto shrink-0 font-mono text-xs text-white/80 relative z-10">
-          <span class="bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 backdrop-blur-sm">Zero Limit</span>
-          <span class="bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 backdrop-blur-sm">Data Aman</span>
+        <div class="flex items-center space-x-2.5 self-start md:self-auto shrink-0 font-mono text-[10px] sm:text-xs text-white/80 relative z-10">
+          <span class="bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/10 backdrop-blur-sm">Zero Limit</span>
+          <span class="bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/10 backdrop-blur-sm">Data Aman</span>
         </div>
       </div>
 
       <!-- Tab Navigation Switcher -->
       <nav id="tabs-navigation" class="flex bg-white/5 p-1 rounded-xl border border-white/10 gap-1 overflow-x-auto w-full relative z-10" aria-label="Tabs">
         <!-- Tab 1: Merge -->
-        <button id="tab-merge" class="active-tab flex-1 py-2.5 rounded-lg text-center font-medium text-xs bg-blue-600 text-white shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden" data-target="panel-merge">
+        <button id="tab-merge" class="active-tab flex-1 sm:flex-none shrink-0 min-w-max py-2.5 px-4 rounded-lg text-center font-medium text-xs bg-blue-600 text-white shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden" data-target="panel-merge">
           <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
           </svg>
@@ -66,7 +68,7 @@
         </button>
 
         <!-- Tab 2: Split -->
-        <button id="tab-split" class="flex-1 py-2.5 rounded-lg text-center font-medium text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden" data-target="panel-split">
+        <button id="tab-split" class="flex-1 sm:flex-none shrink-0 min-w-max py-2.5 px-4 rounded-lg text-center font-medium text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden" data-target="panel-split">
           <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7h7m-7-3h7M5 19V5a2 2 0 012-2h4l2 2h4a2 2 0 012 2v2M5 19a2 2 0 002 2h10a2 2 0 002-2M5 19a2 2 0 01-2-2v-4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2" />
           </svg>
@@ -74,7 +76,7 @@
         </button>
 
         <!-- Tab 3: Image to PDF -->
-        <button id="tab-img" class="flex-1 py-2.5 rounded-lg text-center font-medium text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden" data-target="panel-img">
+        <button id="tab-img" class="flex-1 sm:flex-none shrink-0 min-w-max py-2.5 px-4 rounded-lg text-center font-medium text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden" data-target="panel-img">
           <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 17m0 0l1-1m-1 1" />
           </svg>
@@ -87,10 +89,10 @@
 
         <!-- ================= PANEL 1: GABUNG PDF ================= -->
         <section id="panel-merge" class="tab-panel space-y-6">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
             <!-- Upload Area & Info -->
             <div class="lg:col-span-1 space-y-4">
-              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-2xl space-y-4 relative overflow-hidden">
+              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-2xl space-y-4 relative overflow-hidden">
                 <h3 class="text-xs font-bold font-mono text-blue-400 tracking-widest uppercase">Ambil File PDF</h3>
                 <p class="text-xs text-white/60 leading-relaxed">Pilih beberapa file PDF untuk digabungkan menjadi satu dokumen beruntun sesuai urutan yang Anda tentukan.</p>
                 
@@ -168,10 +170,10 @@
 
         <!-- ================= PANEL 2: PISAH & HAPUS HALAMAN ================= -->
         <section id="panel-split" class="tab-panel space-y-6 hidden">
-          <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
             <!-- Source Side Panel -->
             <div class="lg:col-span-1 space-y-4">
-              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-2xl space-y-4">
+              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-2xl space-y-4">
                 <h3 class="text-xs font-bold font-mono text-blue-400 tracking-widest uppercase">Input File PDF</h3>
                 <p class="text-xs text-white/60 leading-relaxed">Pilih berkas PDF orisinal untuk melihat layout per halaman secara visual.</p>
 
@@ -274,10 +276,10 @@
 
         <!-- ================= PANEL 3: IMAGES TO PDF ================= -->
         <section id="panel-img" class="tab-panel space-y-6 hidden">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
             <!-- Sidebar Setup & Options -->
             <div class="lg:col-span-1 space-y-4">
-              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-2xl space-y-5">
+              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-2xl space-y-5">
                 <div class="space-y-2">
                   <h3 class="text-xs font-bold font-mono text-blue-400 tracking-widest uppercase">Konversi Gambar</h3>
                   <p class="text-xs text-white/60 leading-relaxed">Impor kumpulan foto atau file gambar untuk disalin dalam lembaran dokumen PDF rapi.</p>
@@ -397,9 +399,9 @@
     </main>
 
     <!-- Footer -->
-    <footer id="app-footer" class="bg-black/20 backdrop-blur-md border-t border-white/10 py-5 mt-12 shrink-0 relative z-10">
+    <footer id="app-footer" class="bg-black/20 backdrop-blur-md border-t border-white/10 py-4 sm:py-5 mt-6 sm:mt-12 shrink-0 relative z-10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:flex sm:justify-between sm:items-center space-y-2 sm:space-y-0 text-white/40">
-        <p class="text-[11px] font-mono tracking-wide uppercase">&copy; 2026 Client-side PDF Suite. Semua Hak Dilindungi.</p>
+        <p class="text-[11px] font-mono tracking-wide uppercase">&copy; 26-05-2026 PDFFDA. Semua Hak Dilindungi.</p>
         <p class="text-[10px] font-mono bg-white/5 text-white/50 px-3 py-1 rounded-lg border border-white/10 w-fit mx-auto sm:mx-0 shadow-inner">
           Lib: pdf-lib v1.17.1 &amp; pdfjs-dist v4.10.38
         </p>

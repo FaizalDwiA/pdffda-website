@@ -1,5 +1,5 @@
 /**
- * Client-Side PDF Utility Suite - Main UI Manager
+ * PDFFDA - Main UI Manager
  */
 
 import '../index.css';
@@ -162,9 +162,9 @@ function initTabSwitcher() {
       
       // Toggle Tabs
       tabs.forEach(t => {
-        t.className = "flex-1 py-2.5 rounded-lg text-center font-medium text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden";
+        t.className = "flex-1 sm:flex-none shrink-0 min-w-max py-2.5 px-4 rounded-lg text-center font-medium text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden";
       });
-      tab.className = "active-tab flex-1 py-2.5 rounded-lg text-center font-medium text-xs bg-blue-600 text-white shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden";
+      tab.className = "active-tab flex-1 sm:flex-none shrink-0 min-w-max py-2.5 px-4 rounded-lg text-center font-medium text-xs bg-blue-600 text-white shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden";
 
       // Toggle Panels
       panels.forEach(panel => {
@@ -230,7 +230,7 @@ function initMergeMode() {
         setLoader(true, 'Menggabungkan PDF', `Dokumen ${currentIndex} dari ${totalIndex} selesai digabung.`, percent);
       });
 
-      downloadBlob(mergedBytes, 'gabungan_workspace.pdf');
+      downloadBlob(mergedBytes, 'gabungan_pdffda.pdf');
       notify('success', 'Aksi Berhasil', 'PDF berhasil digabungkan dan siap diunduh.');
     } catch (err) {
       console.error(err);
@@ -666,7 +666,7 @@ function initImageToPdfMode() {
         setLoader(true, 'Menyalin Halaman', `Melukis gambar ${curr} dari ${total} halaman ke berkas...`, percent);
       });
 
-      downloadBlob(compiledPdf, 'gambar_terkompilasi.pdf');
+      downloadBlob(compiledPdf, 'gambar_pdffda.pdf');
       notify('success', 'Sukses Konversi', 'PDF rancangan gambar Anda berhasil dipersiapkan.');
     } catch (err) {
       console.error(err);

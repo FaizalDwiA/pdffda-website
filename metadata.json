@@ -1,5 +1,5 @@
 {
-  "name": "Client-Side PDF Utility Suite",
+  "name": "PDFFDA",
   "description": "An offline, privacy-first tool to Merge, Split, Delete pages, and convert Images to PDF completely in your browser.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

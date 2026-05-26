@@ -6,11 +6,15 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: #0c111d;
   color: #ffffff;
-  overflow-x: hidden;
 }
 
 /* Custom premium scrollbar for dark frosted-glass dashboard */
@@ -42,3 +46,13 @@ body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Hides scrollbar on tabs navigation for cleaner touch interaction */
+#tabs-navigation {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+#tabs-navigation::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+

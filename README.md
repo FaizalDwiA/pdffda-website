@@ -1,6 +1,6 @@
-# Client-Side PDF Utility Suite (All-in-One PDF Tool)
+# PDFFDA (All-in-One PDF Tool)
 
-PDF Workspace adalah aplikasi web modern all-in-one untuk memanipulasi dokumen PDF secara instan dan aman. Aplikasi ini berjalan **100% di sisi klien (client-side)** tanpa server, tanpa API eksternal, dan tanpa mengunggah berkas apa pun ke internet.
+PDFFDA adalah aplikasi web modern all-in-one untuk memanipulasi dokumen PDF secara instan dan aman. Aplikasi ini berjalan **100% di sisi klien (client-side)** tanpa server, tanpa API eksternal, dan tanpa mengunggah berkas apa pun ke internet.
 
 Dengan memproses dokumen secara lokal di dalam browser Anda menggunakan pustaka tangguh, kami menjamin privasi data penuh dan keamanan mutlak untuk semua berkas sensitif Anda.
 
