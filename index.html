@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client-Side PDF Utility Suite</title>
+    <script type="module" crossorigin src="./assets/index-CKeSbY7p.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BcfiS5vH.css">
+  </head>
+  <body class="min-h-screen bg-[#0c111d] text-white font-sans flex flex-col antialiased relative overflow-x-hidden">
+
+    <!-- Background Mesh Gradients -->
+    <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-900/15 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-900/15 rounded-full blur-[100px] pointer-events-none z-0"></div>
+
+    <!-- Header / Nav -->
+    <header id="app-header" class="bg-black/40 backdrop-blur-md border-b border-white/10 sticky top-0 z-40 shadow-lg relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="bg-blue-600 text-white p-1.5 rounded-lg flex items-center justify-center shadow-md shadow-blue-900/30">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-sm font-bold text-white tracking-widest leading-none uppercase">PDF <span class="text-blue-400">Pro</span> Workspace</h1>
+            <p class="text-[9px] text-white/40 font-semibold uppercase mt-0.5">100% Client-Side &amp; Privacy-First</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-3">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-mono font-semibold bg-white/5 text-emerald-400 border border-emerald-500/20 shadow-xs">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+            Mode: Offline / Aman
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main id="app-main" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col space-y-6 relative z-10">
+      
+      <!-- Brief Description Header -->
+      <div id="welcome-message" class="bg-gradient-to-r from-blue-950/40 to-indigo-950/40 backdrop-blur-xl border border-white/10 text-white rounded-2xl p-6 shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-blue-500/5 mix-blend-color-dodge pointer-events-none"></div>
+        <div class="space-y-1 relative z-10">
+          <h2 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 bg-blue-500 rounded-full animate-ping shrink-0"></span>
+            Kompilasi &amp; Modifikasi PDF Instan Tanpa Server
+          </h2>
+          <p class="text-xs text-white/60 max-w-2xl leading-relaxed">Semua file diproses secara lokal langsung di peramban Anda. Dokumen rahasia Anda tidak akan pernah diunggah ke internet atau server mana pun demi privasi penuh.</p>
+        </div>
+        <div class="flex items-center space-x-3 self-start md:self-auto shrink-0 font-mono text-xs text-white/80 relative z-10">
+          <span class="bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 backdrop-blur-sm">Zero Limit</span>
+          <span class="bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 backdrop-blur-sm">Data Aman</span>
+        </div>
+      </div>
+
+      <!-- Tab Navigation Switcher -->
+      <nav id="tabs-navigation" class="flex bg-white/5 p-1 rounded-xl border border-white/10 gap-1 overflow-x-auto w-full relative z-10" aria-label="Tabs">
+        <!-- Tab 1: Merge -->
+        <button id="tab-merge" class="active-tab flex-1 py-2.5 rounded-lg text-center font-medium text-xs bg-blue-600 text-white shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden" data-target="panel-merge">
+          <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+          <span class="truncate">Gabung PDF</span>
+        </button>
+
+        <!-- Tab 2: Split -->
+        <button id="tab-split" class="flex-1 py-2.5 rounded-lg text-center font-medium text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden" data-target="panel-split">
+          <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7h7m-7-3h7M5 19V5a2 2 0 012-2h4l2 2h4a2 2 0 012 2v2M5 19a2 2 0 002 2h10a2 2 0 002-2M5 19a2 2 0 01-2-2v-4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2" />
+          </svg>
+          <span class="truncate">Pisah &amp; Hapus Halaman</span>
+        </button>
+
+        <!-- Tab 3: Image to PDF -->
+        <button id="tab-img" class="flex-1 py-2.5 rounded-lg text-center font-medium text-xs text-white/60 hover:text-white hover:bg-white/5 flex items-center justify-center space-x-2 transition-all cursor-pointer focus:outline-hidden" data-target="panel-img">
+          <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 17m0 0l1-1m-1 1" />
+          </svg>
+          <span class="truncate">Gambar ke PDF</span>
+        </button>
+      </nav>
+
+      <!-- PANELS WRAPPER -->
+      <div id="panels-container" class="relative z-10">
+
+        <!-- ================= PANEL 1: GABUNG PDF ================= -->
+        <section id="panel-merge" class="tab-panel space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Upload Area & Info -->
+            <div class="lg:col-span-1 space-y-4">
+              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-2xl space-y-4 relative overflow-hidden">
+                <h3 class="text-xs font-bold font-mono text-blue-400 tracking-widest uppercase">Ambil File PDF</h3>
+                <p class="text-xs text-white/60 leading-relaxed">Pilih beberapa file PDF untuk digabungkan menjadi satu dokumen beruntun sesuai urutan yang Anda tentukan.</p>
+                
+                <!-- Drag and Drop Zone -->
+                <div id="dropzone-merge" class="border-2 border-dashed border-white/10 hover:border-blue-500 bg-black/20 hover:bg-blue-600/10 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 group">
+                  <input type="file" id="input-merge" class="hidden" multiple accept="application/pdf" />
+                  <div class="space-y-2">
+                    <div class="mx-auto h-10 w-10 text-white/50 flex items-center justify-center bg-white/5 rounded-full border border-white/10 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    </div>
+                    <div class="text-xs font-semibold text-blue-400 group-hover:text-blue-300 transition-colors">Klik untuk unggah</div>
+                    <div class="text-[10px] text-white/40">atau Drag &amp; Drop file di sini</div>
+                  </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-blue-500/10 rounded-xl p-4 border border-blue-500/20 flex items-start space-x-3">
+                  <svg class="h-4 w-4 text-blue-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="text-[11.5px] text-white/70 leading-relaxed font-semibold">
+                    Gunakan tombol **Naik** / **Turun** di sebelah kanan daftar untuk menyusun kembali urutan penggabungan file PDF secara langsung.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- List and Reordering Workspace -->
+            <div class="lg:col-span-2 space-y-4">
+              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col min-h-[320px]">
+                <div class="bg-white/5 px-4 py-3 border-b border-white/10 flex justify-between items-center shrink-0">
+                  <h3 class="text-xs font-bold text-white uppercase tracking-wider">Daftar Urutan PDF</h3>
+                  <button id="btn-clear-merge" class="text-[10px] font-semibold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-2.5 py-1 rounded transition-colors hidden cursor-pointer border border-red-500/20">
+                    Kosongkan Semua
+                  </button>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-merge" class="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
+                  <div class="p-4 bg-white/5 rounded-full text-white/40 border border-white/10">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m-9 1V4a2 2 0 012-2h6l2 2h6a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-semibold text-white/80">Belum Ada File Terpilih</h4>
+                    <p class="text-[11px] text-white/45 mt-1 max-w-xs">Silakan pilih atau seret dokumen PDF Anda terlebih dahulu di area pengunggahan sebelah kiri.</p>
+                  </div>
+                </div>
+
+                <!-- Active File List Rows -->
+                <div id="list-merge" class="divide-y divide-white/5 overflow-y-auto flex-1 h-0 hidden max-h-[400px]">
+                  <!-- File Rows go here dynamically -->
+                </div>
+
+                <!-- Action Footing -->
+                <div id="foot-merge" class="bg-black/30 p-4 border-t border-white/10 flex justify-between items-center gap-4 shrink-0 hidden">
+                  <div class="text-xs font-mono text-white/40">
+                    <span id="merge-file-count" class="font-bold text-blue-400 text-sm">0</span> File &bull; 
+                    <span id="merge-page-count" class="font-bold text-blue-400 text-sm">0</span> Halaman
+                  </div>
+                  <button id="btn-run-merge" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-2.5 rounded-lg inline-flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-blue-900/40">
+                    <span>Gabungkan Dokumen</span>
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= PANEL 2: PISAH & HAPUS HALAMAN ================= -->
+        <section id="panel-split" class="tab-panel space-y-6 hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Source Side Panel -->
+            <div class="lg:col-span-1 space-y-4">
+              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-2xl space-y-4">
+                <h3 class="text-xs font-bold font-mono text-blue-400 tracking-widest uppercase">Input File PDF</h3>
+                <p class="text-xs text-white/60 leading-relaxed">Pilih berkas PDF orisinal untuk melihat layout per halaman secara visual.</p>
+
+                <!-- Single Upload Box -->
+                <div id="dropzone-split" class="border-2 border-dashed border-white/10 hover:border-blue-500 bg-black/20 hover:bg-blue-600/10 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 group">
+                  <input type="file" id="input-split" class="hidden" accept="application/pdf" />
+                  <div class="space-y-2" id="split-uploader-prompt">
+                    <div class="mx-auto h-10 w-10 text-white/50 flex items-center justify-center bg-white/5 rounded-full border border-white/10 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    </div>
+                    <div class="text-xs font-semibold text-blue-400 group-hover:text-blue-300 transition-colors">Klik untuk pilih</div>
+                    <div class="text-[10px] text-white/40">Atau seret file ke sini</div>
+                  </div>
+                  <!-- File Selected View -->
+                  <div id="split-uploader-active" class="hidden space-y-2 py-2">
+                    <div class="mx-auto h-12 w-12 text-blue-400 flex items-center justify-center bg-blue-500/10 rounded-full border border-blue-500/30">
+                      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div class="text-xs font-bold text-white truncate px-1 animate-pulse" id="split-file-name">file_original.pdf</div>
+                    <div class="text-[9px] text-white/40 font-mono" id="split-file-size">0 KB</div>
+                    <button id="btn-change-split" class="text-[10px] text-blue-400 hover:text-blue-300 hover:underline font-bold block mx-auto pt-1 cursor-pointer">Ganti File</button>
+                  </div>
+                </div>
+
+                <!-- Utilities Mode Actions (Active Only) -->
+                <div id="split-actions" class="hidden space-y-4">
+                  <div class="border-t border-white/10 pt-4 space-y-2">
+                    <label class="block text-[10px] font-bold text-white/40 uppercase tracking-widest leading-none">Pilihan Cepat Halaman</label>
+                    <div class="grid grid-cols-3 gap-1.5 pt-1">
+                      <button id="pilih-semua" class="bg-white/5 hover:bg-white/10 text-white/80 text-[10px] font-medium py-1.5 px-2 rounded-md border border-white/5 transition-colors text-center cursor-pointer">
+                        Semua
+                      </button>
+                      <button id="bersihkan-pilihan" class="bg-white/5 hover:bg-white/10 text-white/80 text-[10px] font-medium py-1.5 px-2 rounded-md border border-white/5 transition-colors text-center cursor-pointer">
+                        Kosong
+                      </button>
+                      <button id="balikkan-pilihan" class="bg-white/5 hover:bg-white/10 text-white/80 text-[10px] font-medium py-1.5 px-2 rounded-md border border-white/5 transition-colors text-center cursor-pointer">
+                        Balik
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="space-y-1.5 bg-black/20 border border-white/10 p-3 rounded-lg block">
+                    <div class="flex items-center justify-between text-[11px] font-mono">
+                      <span class="text-white/50">Halaman Terpilih:</span>
+                      <span id="selected-badge" class="font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 rounded">0 dari 0</span>
+                    </div>
+                  </div>
+
+                  <!-- Two Primary Methods to Output -->
+                  <div class="space-y-2 border-t border-white/10 pt-4">
+                    <button id="btn-extract" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 px-3 rounded-lg flex items-center justify-center space-x-1.5 shadow-lg shadow-blue-900/20 transition-all cursor-pointer">
+                      <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Ekstrak Terpilih</span>
+                    </button>
+                    <button id="btn-delete" class="w-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/25 text-red-400 font-bold text-xs py-2.5 px-3 rounded-lg flex items-center justify-center space-x-1.5 transition-all cursor-pointer">
+                      <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      <span>Hapus Terpilih</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Previews Workspace -->
+            <div class="lg:col-span-3 space-y-4">
+              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col min-h-[380px]">
+                <div class="bg-white/5 px-4 py-3 border-b border-white/10 flex justify-between items-center">
+                  <h3 class="text-xs font-bold text-white uppercase tracking-wider">Lembar Preview &amp; Seleksi Halaman</h3>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-split" class="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
+                  <div class="p-4 bg-white/5 rounded-full text-white/40 border border-white/10">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-semibold text-white/80">Preview PDF Kosong</h4>
+                    <p class="text-[11px] text-white/45 mt-1 max-w-sm">Daftar halaman akan langsung dimuat secara visual dengan rendering canvas yang aman di sini setelah Anda mengunggah berkas.</p>
+                  </div>
+                </div>
+
+                <!-- Grid previews wrapper -->
+                <div id="split-grid" class="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 hidden max-h-[600px]">
+                  <!-- Cards dynamically inserted here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= PANEL 3: IMAGES TO PDF ================= -->
+        <section id="panel-img" class="tab-panel space-y-6 hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Sidebar Setup & Options -->
+            <div class="lg:col-span-1 space-y-4">
+              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-5 shadow-2xl space-y-5">
+                <div class="space-y-2">
+                  <h3 class="text-xs font-bold font-mono text-blue-400 tracking-widest uppercase">Konversi Gambar</h3>
+                  <p class="text-xs text-white/60 leading-relaxed">Impor kumpulan foto atau file gambar untuk disalin dalam lembaran dokumen PDF rapi.</p>
+                </div>
+
+                <!-- Upload Drag/Drop -->
+                <div id="dropzone-img" class="border-2 border-dashed border-white/10 hover:border-blue-500 bg-black/20 hover:bg-blue-600/10 rounded-xl p-6 text-center cursor-pointer transition-all duration-300 group">
+                  <input type="file" id="input-img" class="hidden" multiple accept="image/png, image/jpeg, image/jpg" />
+                  <div class="space-y-2">
+                    <div class="mx-auto h-10 w-10 text-white/50 flex items-center justify-center bg-white/5 rounded-full border border-white/10 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 17m0 0l1-1m-1 1c0 1.25.1 1.75.5 2" />
+                      </svg>
+                    </div>
+                    <div class="text-xs font-semibold text-blue-400 group-hover:text-blue-300 transition-colors">Klik untuk ambil gambar</div>
+                    <div class="text-[10px] text-white/40">Mendukung JPG, JPEG, PNG</div>
+                  </div>
+                </div>
+
+                <!-- Options Custom Setting -->
+                <div class="space-y-4 border-t border-white/10 pt-4">
+                  <h4 class="text-[10px] font-bold text-white/40 uppercase tracking-widest leading-none">Pengaturan Layout Halaman</h4>
+                  
+                  <!-- Page Size Selection -->
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-white/70">Ukuran Kertas</label>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button id="size-a4" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-center cursor-pointer transition-all border border-blue-500 bg-blue-600/30 text-white shadow-sm" data-size="A4">
+                        A4 (210 &times; 297mm)
+                      </button>
+                      <button id="size-letter" class="px-3 py-1.5 text-xs font-medium rounded-lg text-center cursor-pointer transition-all border border-white/10 bg-white/5 text-white/70 hover:bg-white/10" data-size="Letter">
+                        Letter (8.5 &times; 11")
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Page Orientation Selection -->
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-white/70">Orientasi Kertas</label>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button id="orient-portrait" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-center cursor-pointer transition-all border border-blue-500 bg-blue-600/30 text-white shadow-sm" data-orient="portrait">
+                        Potret (Portrait)
+                      </button>
+                      <button id="orient-landscape" class="px-3 py-1.5 text-xs font-medium rounded-lg text-center cursor-pointer transition-all border border-white/10 bg-white/5 text-white/70 hover:bg-white/10" data-orient="landscape">
+                        Lansekap (Landscape)
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Image Margins -->
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-white/70">Dimensi Margin Kertas</label>
+                    <div class="grid grid-cols-3 gap-2">
+                      <button id="margin-none" class="px-2 py-1.5 text-xs font-semibold rounded-lg text-center cursor-pointer transition-all border border-blue-500 bg-blue-600/30 text-white shadow-sm" data-margin="none">
+                        Tanpa Margin
+                      </button>
+                      <button id="margin-small" class="px-2 py-1.5 text-xs font-medium rounded-lg text-center cursor-pointer transition-all border border-white/10 bg-white/5 text-white/70 hover:bg-white/10" data-margin="small">
+                        12px (Tipis)
+                      </button>
+                      <button id="margin-large" class="px-2 py-1.5 text-xs font-medium rounded-lg text-center cursor-pointer transition-all border border-white/10 bg-white/5 text-white/70 hover:bg-white/10" data-margin="large">
+                        24px (Lebar)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Previews Workspace -->
+            <div class="lg:col-span-2 space-y-4">
+              <div class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col min-h-[380px]">
+                <div class="bg-white/5 px-4 py-3 border-b border-white/10 flex justify-between items-center shrink-0">
+                  <h3 class="text-xs font-bold text-white uppercase tracking-wider">Kliping &amp; Urutan Gambar</h3>
+                  <button id="btn-clear-img" class="text-[10px] font-semibold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-2.5 py-1 rounded transition-colors hidden cursor-pointer border border-red-500/20">
+                    Kosongkan Halaman
+                  </button>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-img" class="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
+                  <div class="p-4 bg-white/5 rounded-full text-white/40 border border-white/10">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 17m0 0l1-1m-1 1c0 1.25.1 1.75.5 2" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-semibold text-white/80">Gambar Belum Ditambahkan</h4>
+                    <p class="text-[11px] text-white/45 mt-1 max-w-xs">Pilih file gambar Anda di kolom kiri untuk menyusun tata letak PDF.</p>
+                  </div>
+                </div>
+
+                <!-- Horizontal/Grid Preview area of Images -->
+                <div id="img-grid" class="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-2 sm:grid-cols-3 gap-4 hidden max-h-[420px]">
+                  <!-- Images previews go here dynamically -->
+                </div>
+
+                <!-- Action Footer with dynamic metrics -->
+                <div id="foot-img" class="bg-black/30 p-4 border-t border-white/10 flex justify-between items-center gap-4 shrink-0 hidden">
+                  <div class="text-xs font-mono text-white/40">
+                    <span id="img-file-count" class="font-bold text-blue-400 text-sm">0</span> Gambar &bull; 
+                    <span class="text-white/40">Kertas: </span><span id="img-meta-desc" class="font-bold text-blue-400">A4 Potret</span>
+                  </div>
+                  <button id="btn-run-img" class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-2.5 rounded-lg inline-flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-blue-900/40">
+                    <span>Persiapkan &amp; Simpan</span>
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer id="app-footer" class="bg-black/20 backdrop-blur-md border-t border-white/10 py-5 mt-12 shrink-0 relative z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:flex sm:justify-between sm:items-center space-y-2 sm:space-y-0 text-white/40">
+        <p class="text-[11px] font-mono tracking-wide uppercase">&copy; 2026 Client-side PDF Suite. Semua Hak Dilindungi.</p>
+        <p class="text-[10px] font-mono bg-white/5 text-white/50 px-3 py-1 rounded-lg border border-white/10 w-fit mx-auto sm:mx-0 shadow-inner">
+          Lib: pdf-lib v1.17.1 &amp; pdfjs-dist v4.10.38
+        </p>
+      </div>
+    </footer>
+
+    <!-- REAL-TIME PROGRESS LOADER (OVERLAY MODAL) -->
+    <div id="loader-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 transition-all opacity-0 pointer-events-none duration-200">
+      <div class="bg-slate-950/60 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/10 max-w-sm w-full mx-4 flex flex-col items-center space-y-4">
+        <!-- Spinner animation -->
+        <div class="h-10 w-10 border-4 border-white/10 border-t-blue-500 rounded-full animate-spin"></div>
+        <div class="text-center space-y-1">
+          <h4 id="loader-title" class="text-xs font-bold text-white uppercase tracking-wider">Sedang Memproses...</h4>
+          <p id="loader-message" class="text-[11px] text-white/60 max-w-[240px]">Menyusun berkas PDF lokal Anda.</p>
+        </div>
+        <!-- Progress Bar (Dynamic) -->
+        <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden border border-white/5">
+          <div id="loader-progressbar" class="bg-blue-500 h-1.5 rounded-full transition-all duration-150" style="width: 0%"></div>
+        </div>
+        <div id="loader-progress-text" class="text-[10px] font-mono text-white/50 font-bold uppercase">0% Selesai</div>
+      </div>
+    </div>
+
+  </body>
+</html>

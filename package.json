@@ -1,0 +1,34 @@
+{
+  "name": "all-in-one-pdf-utility-suite",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port=1174 --host=0.0.0.0",
+    "build": "node -e \"const fs = require('fs'); ['assets', 'index.html', 'index.css', 'index.js'].forEach(f => { if (fs.existsSync(f)) { fs.rmSync(f, {recursive: true, force: true}); } })\" && vite build",
+    "preview": "vite preview",
+    "clean": "node -e \"const fs = require('fs'); ['assets', 'index.html', 'index.css', 'index.js'].forEach(f => { if (fs.existsSync(f)) { fs.rmSync(f, {recursive: true, force: true}); } })\"",
+    "lint": "echo 'No linting needed for vanilla js'"
+  },
+  "dependencies": {
+    "@google/genai": "^2.4.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.10.38",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2"
+  }
+}
