@@ -7,6 +7,7 @@ import PdfToWordPanel from './components/PdfToWordPanel';
 import SignPdfPanel from './components/SignPdfPanel';
 import EditPdfPanel from './components/EditPdfPanel';
 import WatermarkPanel from './components/WatermarkPanel';
+import PdfToImagePanel from './components/PdfToImagePanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -355,6 +356,35 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Card 9: PDF ke Gambar */}
+              <div
+                onClick={() => setActiveTab('panel-pdf-to-image')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-violet-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-violet-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a1 1 0 011.414 0L16 17m0 0l1-1m-1 1l-4-4m4 4H4m8-4V4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-violet-400 transition-colors">PDF ke Gambar</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Konversi setiap halaman PDF menjadi gambar PNG, JPG, atau WebP berkualitas tinggi dan unduh dalam satu berkas ZIP.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-violet-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Konversi
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
             </div>
           </>
         ) : (
@@ -432,6 +462,15 @@ export default function App() {
 
             {activeTab === 'panel-watermark' && (
               <WatermarkPanel
+                notify={notify}
+                setLoader={setLoader}
+                formatBytes={formatBytes}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
+
+            {activeTab === 'panel-pdf-to-image' && (
+              <PdfToImagePanel
                 notify={notify}
                 setLoader={setLoader}
                 formatBytes={formatBytes}

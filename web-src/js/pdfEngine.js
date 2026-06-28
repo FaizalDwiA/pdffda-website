@@ -64,6 +64,52 @@ export async function getPdfThumbnails(file, onProgress) {
 }
 
 /**
+ * Renders a single PDF page to an image Blob.
+ * @param {File} pdfFile PDF file
+ * @param {number} pageNumber Page number (1-based)
+ * @param {Object} options Render options
+ * @param {string} options.format Image format: 'png' | 'jpeg' | 'webp'
+ * @param {number} options.quality Image quality 0.0–1.0 (for jpeg/webp)
+ * @param {number} options.scale DPI scale multiplier (1 = 96dpi, 2 = 192dpi, etc.)
+ * @returns {Promise<Blob>} Image Blob
+ */
+export async function pdfPageToImageBlob(pdfFile, pageNumber, options = {}) {
+  const { format = 'png', quality = 0.92, scale = 2 } = options;
+
+  const arrayBuffer = await pdfFile.arrayBuffer();
+  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+  const pdf = await loadingTask.promise;
+
+  const page = await pdf.getPage(pageNumber);
+  const viewport = page.getViewport({ scale });
+
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const context = canvas.getContext('2d');
+
+  // Fill white background for JPG (canvas is transparent by default)
+  if (format === 'jpeg') {
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  await page.render({ canvasContext: context, viewport }).promise;
+
+  return new Promise((resolve, reject) => {
+    const mimeType = format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : 'image/jpeg';
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error('canvas.toBlob returned null'));
+      },
+      mimeType,
+      quality
+    );
+  });
+}
+
+/**
  * Merges multiple PDF files in the designated list array order.
  * @param {Array<File>} files Ordered file list
  * @param {Function} onProgress Progress callback
