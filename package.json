@@ -1,7 +1,7 @@
 {
   "name": "all-in-one-pdf-utility-suite",
   "private": true,
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite --port=1174 --host=0.0.0.0",
