@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { getPdfThumbnails, processPagesSelection } from '../js/pdfEngine.js';
 
-export default function SplitPanel({ notify, setLoader, downloadBlob, formatBytes }) {
+export default function SplitPanel({ notify, setLoader, downloadBlob, formatBytes, onBack }) {
   const [splitFile, setSplitFile] = useState(null);
   const [thumbnails, setThumbnails] = useState([]);
   const fileInputRef = useRef(null);
@@ -138,6 +138,21 @@ export default function SplitPanel({ notify, setLoader, downloadBlob, formatByte
 
   return (
     <section id="panel-split" className="tab-panel space-y-6">
+      {/* Back Navigation Bar */}
+      <div className="flex items-center space-x-3 pb-2">
+        <button
+          onClick={onBack}
+          className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-semibold text-white/80 hover:text-white transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm active:scale-98"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Kembali ke Menu
+        </button>
+        <span className="text-white/40 text-xs font-semibold">/</span>
+        <span className="text-blue-400 text-xs font-bold font-mono uppercase tracking-wider">Pisah &amp; Hapus Halaman</span>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
         {/* Source Side Panel */}
         <div className="lg:col-span-1 space-y-4">
