@@ -3,7 +3,7 @@
  * 100% Client-Side with zero Server requests.
  */
 
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Configure the pdfjs worker to run seamlessly from Cloudflare CDN matching the precise version installed.
@@ -641,6 +641,102 @@ export async function embedSignatureToPdf(pdfFile, signatureFile, options) {
     console.error('Engine embed signature error:', err);
     throw err;
   }
+}
+
+/**
+ * Saves all edits (text, images, shapes) onto the respective pages of a PDF.
+ * @param {File} pdfFile Original PDF file
+ * @param {Array} edits Array of edit objects
+ * @returns {Promise<Uint8Array>} Updated PDF bytes
+ */
+export async function saveEditedPdf(pdfFile, edits) {
+  try {
+    const pdfBytes = await pdfFile.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pages = pdfDoc.getPages();
+    
+    // Embed Standard Helvetica Font
+    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+    // Group edits by pageIndex
+    const editsByPage = {};
+    for (const edit of edits) {
+      const idx = edit.pageIndex ?? 0;
+      if (!editsByPage[idx]) {
+        editsByPage[idx] = [];
+      }
+      editsByPage[idx].push(edit);
+    }
+
+    // Process each page
+    for (const pageIdxStr of Object.keys(editsByPage)) {
+      const pageIdx = parseInt(pageIdxStr);
+      if (pageIdx < 0 || pageIdx >= pages.length) continue;
+      const targetPage = pages[pageIdx];
+      const pageEdits = editsByPage[pageIdx];
+
+      for (const edit of pageEdits) {
+        if (edit.type === 'text') {
+          const { r, g, b } = hexToRgb(edit.color || '#000000');
+          targetPage.drawText(edit.text || '', {
+            x: edit.x,
+            y: edit.y,
+            size: edit.fontSize || 12,
+            font: helveticaFont,
+            color: rgb(r, g, b),
+          });
+        } else if (edit.type === 'whiteout') {
+          const { r, g, b } = hexToRgb(edit.color || '#ffffff');
+          targetPage.drawRectangle({
+            x: edit.x,
+            y: edit.y,
+            width: edit.width,
+            height: edit.height,
+            color: rgb(r, g, b),
+          });
+        } else if (edit.type === 'image') {
+          if (!edit.file) continue;
+          const imageBytes = await edit.file.arrayBuffer();
+          let embeddedImage;
+          const lowerName = edit.file.name.toLowerCase();
+          if (lowerName.endsWith('.png') || edit.file.type === 'image/png') {
+            embeddedImage = await pdfDoc.embedPng(imageBytes);
+          } else if (lowerName.endsWith('.jpg') || lowerName.endsWith('.jpeg') || edit.file.type === 'image/jpeg') {
+            embeddedImage = await pdfDoc.embedJpg(imageBytes);
+          } else {
+            try {
+              embeddedImage = await pdfDoc.embedPng(imageBytes);
+            } catch {
+              embeddedImage = await pdfDoc.embedJpg(imageBytes);
+            }
+          }
+          targetPage.drawImage(embeddedImage, {
+            x: edit.x,
+            y: edit.y,
+            width: edit.width,
+            height: edit.height,
+          });
+        }
+      }
+    }
+
+    return await pdfDoc.save();
+  } catch (err) {
+    console.error('Engine saveEditedPdf error:', err);
+    throw err;
+  }
+}
+
+function hexToRgb(hex) {
+  let cleanHex = hex.replace('#', '');
+  if (cleanHex.length === 3) {
+    cleanHex = cleanHex.split('').map(c => c + c).join('');
+  }
+  const num = parseInt(cleanHex, 16);
+  const r = ((num >> 16) & 255) / 255;
+  const g = ((num >> 8) & 255) / 255;
+  const b = (num & 255) / 255;
+  return { r, g, b };
 }
 
 

@@ -5,6 +5,7 @@ import ImageToPdfPanel from './components/ImageToPdfPanel';
 import EditMetadataPanel from './components/EditMetadataPanel';
 import PdfToWordPanel from './components/PdfToWordPanel';
 import SignPdfPanel from './components/SignPdfPanel';
+import EditPdfPanel from './components/EditPdfPanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -119,10 +120,10 @@ export default function App() {
             </div>
 
             {/* Premium Tools Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 max-w-7xl mx-auto w-full pt-4">
-              
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-6 max-w-7xl mx-auto w-full pt-4">
+
               {/* Card 1: Merge PDF */}
-              <div 
+              <div
                 onClick={() => setActiveTab('panel-merge')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-orange-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-orange-950/20 group relative overflow-hidden"
               >
@@ -151,7 +152,7 @@ export default function App() {
               </div>
 
               {/* Card 2: Split PDF */}
-              <div 
+              <div
                 onClick={() => setActiveTab('panel-split')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-blue-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-blue-950/20 group relative overflow-hidden"
               >
@@ -180,7 +181,7 @@ export default function App() {
               </div>
 
               {/* Card 3: Image to PDF */}
-              <div 
+              <div
                 onClick={() => setActiveTab('panel-img')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-green-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-green-950/20 group relative overflow-hidden"
               >
@@ -209,7 +210,7 @@ export default function App() {
               </div>
 
               {/* Card 4: Edit Metadata PDF */}
-              <div 
+              <div
                 onClick={() => setActiveTab('panel-metadata')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-purple-950/20 group relative overflow-hidden"
               >
@@ -295,6 +296,35 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Card 7: PDF Editor */}
+              <div
+                onClick={() => setActiveTab('panel-edit')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-indigo-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-indigo-400 transition-colors">Edit PDF (Gagal)</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Tambahkan teks baru, sensor (whiteout), atau sisipkan gambar kustom secara offline dengan kontrol presisi.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-indigo-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Mengedit
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
             </div>
           </>
         ) : (
@@ -354,6 +384,15 @@ export default function App() {
 
             {activeTab === 'panel-sign' && (
               <SignPdfPanel
+                notify={notify}
+                setLoader={setLoader}
+                formatBytes={formatBytes}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
+
+            {activeTab === 'panel-edit' && (
+              <EditPdfPanel
                 notify={notify}
                 setLoader={setLoader}
                 formatBytes={formatBytes}
