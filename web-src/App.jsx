@@ -96,10 +96,13 @@ export default function App() {
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-white/5 text-emerald-400 border border-emerald-500/20 shadow-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
               Offline / Aman
+            </span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-white/5 text-blue-400 border border-blue-500/20 shadow-xs">
+              v{__APP_VERSION__}
             </span>
           </div>
         </div>
@@ -487,7 +490,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:flex sm:justify-between sm:items-center space-y-2 sm:space-y-0 text-white/40">
           <p className="text-[11px] font-mono tracking-wide uppercase">&copy; 26-05-2026 PDFFDA. Semua Hak Dilindungi.</p>
           <p className="text-[10px] font-mono bg-white/5 text-white/50 px-3 py-1 rounded-lg border border-white/10 w-fit mx-auto sm:mx-0 shadow-inner">
-            Lib: pdf-lib v1.17.1 &amp; pdfjs-dist v4.10.38
+            v{__APP_VERSION__} · Lib: pdf-lib v1.17.1 &amp; pdfjs-dist v4.10.38
           </p>
         </div>
       </footer>

@@ -8,7 +8,8 @@
     "build": "node -e \"const fs = require('fs'); ['assets', 'index.html', 'index.css', 'index.js'].forEach(f => { if (fs.existsSync(f)) { fs.rmSync(f, {recursive: true, force: true}); } })\" && vite build",
     "preview": "vite preview",
     "clean": "node -e \"const fs = require('fs'); ['assets', 'index.html', 'index.css', 'index.js'].forEach(f => { if (fs.existsSync(f)) { fs.rmSync(f, {recursive: true, force: true}); } })\"",
-    "lint": "echo 'No linting needed for vanilla js'"
+    "lint": "echo 'No linting needed for vanilla js'",
+    "release": "release-it --no-git.requireCleanWorkingDir"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -29,8 +30,23 @@
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
+    "release-it": "^20.2.1",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release v${version}",
+      "tagName": "v${version}",
+      "tagAnnotation": "Release v${version}",
+      "requireCleanWorkingDir": false
+    },
+    "npm": {
+      "publish": false
+    },
+    "hooks": {
+      "after:bump": "npm run build"
+    }
   }
 }
