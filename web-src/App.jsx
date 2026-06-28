@@ -4,6 +4,7 @@ import SplitPanel from './components/SplitPanel';
 import ImageToPdfPanel from './components/ImageToPdfPanel';
 import EditMetadataPanel from './components/EditMetadataPanel';
 import PdfToWordPanel from './components/PdfToWordPanel';
+import SignPdfPanel from './components/SignPdfPanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -118,10 +119,10 @@ export default function App() {
             </div>
 
             {/* Premium Tools Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto w-full pt-4">
-
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 max-w-7xl mx-auto w-full pt-4">
+              
               {/* Card 1: Merge PDF */}
-              <div
+              <div 
                 onClick={() => setActiveTab('panel-merge')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-orange-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-orange-950/20 group relative overflow-hidden"
               >
@@ -150,7 +151,7 @@ export default function App() {
               </div>
 
               {/* Card 2: Split PDF */}
-              <div
+              <div 
                 onClick={() => setActiveTab('panel-split')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-blue-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-blue-950/20 group relative overflow-hidden"
               >
@@ -179,7 +180,7 @@ export default function App() {
               </div>
 
               {/* Card 3: Image to PDF */}
-              <div
+              <div 
                 onClick={() => setActiveTab('panel-img')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-green-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-green-950/20 group relative overflow-hidden"
               >
@@ -208,7 +209,7 @@ export default function App() {
               </div>
 
               {/* Card 4: Edit Metadata PDF */}
-              <div
+              <div 
                 onClick={() => setActiveTab('panel-metadata')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-purple-950/20 group relative overflow-hidden"
               >
@@ -258,6 +259,35 @@ export default function App() {
                 <div className="flex items-center justify-end pt-6 relative z-10">
                   <span className="text-cyan-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
                     Mulai Konversi
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 6: PDF Signer */}
+              <div
+                onClick={() => setActiveTab('panel-sign')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-rose-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-rose-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-450 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-rose-400 transition-colors">Tanda Tangan PDF</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Sematkan tanda tangan gambar ke halaman PDF pilihan Anda dengan preview visual interaktif yang mulus.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-rose-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Tanda Tangan
                     <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -315,6 +345,15 @@ export default function App() {
 
             {activeTab === 'panel-word' && (
               <PdfToWordPanel
+                notify={notify}
+                setLoader={setLoader}
+                formatBytes={formatBytes}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
+
+            {activeTab === 'panel-sign' && (
+              <SignPdfPanel
                 notify={notify}
                 setLoader={setLoader}
                 formatBytes={formatBytes}

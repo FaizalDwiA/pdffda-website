@@ -597,4 +597,51 @@ export async function convertPdfToWord(file, onProgress) {
   }
 }
 
+/**
+ * Embeds a signature image onto a specific page of a PDF document.
+ * @param {File} pdfFile PDF file
+ * @param {File} signatureFile Signature image file (PNG/JPG)
+ * @param {Object} options Options containing pageIndex, x, y, width, height
+ * @returns {Promise<Uint8Array>} Updated PDF bytes
+ */
+export async function embedSignatureToPdf(pdfFile, signatureFile, options) {
+  try {
+    const pdfBytes = await pdfFile.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+
+    const imageBytes = await signatureFile.arrayBuffer();
+    let embeddedImage;
+
+    const lowerName = signatureFile.name.toLowerCase();
+    if (lowerName.endsWith('.png') || signatureFile.type === 'image/png') {
+      embeddedImage = await pdfDoc.embedPng(imageBytes);
+    } else if (lowerName.endsWith('.jpg') || lowerName.endsWith('.jpeg') || signatureFile.type === 'image/jpeg') {
+      embeddedImage = await pdfDoc.embedJpg(imageBytes);
+    } else {
+      throw new Error('Format gambar tidak didukung. Harap gunakan format PNG atau JPG/JPEG.');
+    }
+
+    const pages = pdfDoc.getPages();
+    const pageIndex = options.pageIndex ?? 0;
+    if (pageIndex < 0 || pageIndex >= pages.length) {
+      throw new Error('Halaman target tidak valid.');
+    }
+
+    const targetPage = pages[pageIndex];
+
+    targetPage.drawImage(embeddedImage, {
+      x: options.x,
+      y: options.y,
+      width: options.width,
+      height: options.height,
+    });
+
+    return await pdfDoc.save();
+  } catch (err) {
+    console.error('Engine embed signature error:', err);
+    throw err;
+  }
+}
+
+
 
