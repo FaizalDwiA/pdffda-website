@@ -6,6 +6,7 @@ import EditMetadataPanel from './components/EditMetadataPanel';
 import PdfToWordPanel from './components/PdfToWordPanel';
 import SignPdfPanel from './components/SignPdfPanel';
 import EditPdfPanel from './components/EditPdfPanel';
+import WatermarkPanel from './components/WatermarkPanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -120,7 +121,7 @@ export default function App() {
             </div>
 
             {/* Premium Tools Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-6 max-w-7xl mx-auto w-full pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto w-full pt-4">
 
               {/* Card 1: Merge PDF */}
               <div
@@ -309,7 +310,7 @@ export default function App() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-white font-bold text-lg group-hover:text-indigo-400 transition-colors">Edit PDF (Gagal)</h3>
+                    <h3 className="text-white font-bold text-lg group-hover:text-indigo-400 transition-colors">Edit PDF</h3>
                     <p className="text-white/60 text-xs mt-2 leading-relaxed">
                       Tambahkan teks baru, sensor (whiteout), atau sisipkan gambar kustom secara offline dengan kontrol presisi.
                     </p>
@@ -318,6 +319,35 @@ export default function App() {
                 <div className="flex items-center justify-end pt-6 relative z-10">
                   <span className="text-indigo-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
                     Mulai Mengedit
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 8: PDF Watermark */}
+              <div
+                onClick={() => setActiveTab('panel-watermark')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-amber-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-amber-400 transition-colors">Watermark PDF</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Sematkan tanda air berupa teks atau gambar logo dengan tingkat transparansi dan sudut putaran kustom.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-amber-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Menyematkan
                     <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -393,6 +423,15 @@ export default function App() {
 
             {activeTab === 'panel-edit' && (
               <EditPdfPanel
+                notify={notify}
+                setLoader={setLoader}
+                formatBytes={formatBytes}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
+
+            {activeTab === 'panel-watermark' && (
+              <WatermarkPanel
                 notify={notify}
                 setLoader={setLoader}
                 formatBytes={formatBytes}

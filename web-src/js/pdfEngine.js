@@ -3,7 +3,7 @@
  * 100% Client-Side with zero Server requests.
  */
 
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, degrees } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Configure the pdfjs worker to run seamlessly from Cloudflare CDN matching the precise version installed.
@@ -737,6 +737,154 @@ function hexToRgb(hex) {
   const g = ((num >> 8) & 255) / 255;
   const b = (num & 255) / 255;
   return { r, g, b };
+}
+
+/**
+ * Adds a list of watermarks to target pages of a PDF.
+ * @param {File} pdfFile PDF file
+ * @param {Array} watermarks List of watermark objects
+ * @param {Object} options Global watermark options (pageRange)
+ * @returns {Promise<Uint8Array>} Updated PDF bytes
+ */
+export async function addWatermarkToPdf(pdfFile, watermarks, options = {}) {
+  try {
+    const pdfBytes = await pdfFile.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pages = pdfDoc.getPages();
+
+    const { pageRange = 'all' } = options;
+
+    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+    // Determine target page indices
+    const targetIndices = [];
+    if (pageRange === 'first') {
+      targetIndices.push(0);
+    } else {
+      for (let i = 0; i < pages.length; i++) {
+        targetIndices.push(i);
+      }
+    }
+
+    // Embed all image watermarks first
+    const embeddedImages = {}; // wm.id -> embeddedImage
+    for (const wm of watermarks) {
+      if (wm.type === 'image' && wm.file) {
+        const imageBytes = await wm.file.arrayBuffer();
+        let embeddedImage;
+        const lowerName = wm.file.name.toLowerCase();
+        if (lowerName.endsWith('.png') || wm.file.type === 'image/png') {
+          embeddedImage = await pdfDoc.embedPng(imageBytes);
+        } else if (lowerName.endsWith('.jpg') || lowerName.endsWith('.jpeg') || wm.file.type === 'image/jpeg') {
+          embeddedImage = await pdfDoc.embedJpg(imageBytes);
+        } else {
+          try {
+            embeddedImage = await pdfDoc.embedPng(imageBytes);
+          } catch {
+            embeddedImage = await pdfDoc.embedJpg(imageBytes);
+          }
+        }
+        embeddedImages[wm.id] = embeddedImage;
+      }
+    }
+
+    for (const idx of targetIndices) {
+      if (idx < 0 || idx >= pages.length) continue;
+      const page = pages[idx];
+      const { width: pageWidth, height: pageHeight } = page.getSize();
+
+      for (const wm of watermarks) {
+        const { r, g, b } = hexToRgb(wm.color || '#f43f5e');
+        const opacityVal = wm.opacity ?? 0.3;
+        const rotationVal = wm.rotation ?? -45;
+
+        if (wm.type === 'text') {
+          const textStr = wm.text || 'DRAFT';
+          const sizeVal = wm.fontSize || 36;
+          const textWidth = helveticaFont.widthOfTextAtSize(textStr, sizeVal);
+          const textHeight = sizeVal * 0.8;
+
+          if (wm.position === 'tiled') {
+            // Tiled grid based on cols and rows
+            const cols = wm.gridCols || 3;
+            const rows = wm.gridRows || 4;
+            const stepX = pageWidth / (cols + 1);
+            const stepY = pageHeight / (rows + 1);
+            for (let r = 1; r <= rows; r++) {
+              for (let c = 1; c <= cols; c++) {
+                const x = c * stepX - (textWidth / 2);
+                const y = r * stepY - (textHeight / 2);
+                page.drawText(textStr, {
+                  x,
+                  y,
+                  size: sizeVal,
+                  font: helveticaFont,
+                  color: rgb(r, g, b),
+                  opacity: opacityVal,
+                  rotate: degrees(rotationVal),
+                });
+              }
+            }
+          } else {
+            // Free position
+            page.drawText(textStr, {
+              x: wm.x,
+              y: wm.y,
+              size: sizeVal,
+              font: helveticaFont,
+              color: rgb(r, g, b),
+              opacity: opacityVal,
+              rotate: degrees(rotationVal),
+            });
+          }
+        } else if (wm.type === 'image') {
+          const embeddedImage = embeddedImages[wm.id];
+          if (!embeddedImage) continue;
+
+          // Calculate dimensions
+          const imgSize = embeddedImage.scale(wm.imageScale || 1.0);
+          const imgWidth = wm.position === 'tiled' ? imgSize.width : (wm.width ?? imgSize.width);
+          const imgHeight = wm.position === 'tiled' ? imgSize.height : (wm.height ?? imgSize.height);
+
+          if (wm.position === 'tiled') {
+            const cols = wm.gridCols || 3;
+            const rows = wm.gridRows || 4;
+            const stepX = pageWidth / (cols + 1);
+            const stepY = pageHeight / (rows + 1);
+            for (let r = 1; r <= rows; r++) {
+              for (let c = 1; c <= cols; c++) {
+                const x = c * stepX - (imgWidth / 2);
+                const y = r * stepY - (imgHeight / 2);
+                page.drawImage(embeddedImage, {
+                  x,
+                  y,
+                  width: imgWidth,
+                  height: imgHeight,
+                  opacity: opacityVal,
+                  rotate: degrees(rotationVal),
+                });
+              }
+            }
+          } else {
+            // Free position
+            page.drawImage(embeddedImage, {
+              x: wm.x,
+              y: wm.y,
+              width: imgWidth,
+              height: imgHeight,
+              opacity: opacityVal,
+              rotate: degrees(rotationVal),
+            });
+          }
+        }
+      }
+    }
+
+    return await pdfDoc.save();
+  } catch (err) {
+    console.error('Engine addWatermarkToPdf error:', err);
+    throw err;
+  }
 }
 
 
