@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import MergePanel from './components/MergePanel';
 import SplitPanel from './components/SplitPanel';
 import ImageToPdfPanel from './components/ImageToPdfPanel';
+import EditMetadataPanel from './components/EditMetadataPanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -116,7 +117,7 @@ export default function App() {
             </div>
 
             {/* Premium Tools Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto w-full pt-4">
               
               {/* Card 1: Merge PDF */}
               <div 
@@ -205,6 +206,35 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Card 4: Edit Metadata PDF */}
+              <div 
+                onClick={() => setActiveTab('panel-metadata')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-purple-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-purple-400 transition-colors">Edit Metadata PDF</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Ubah judul, penulis, subjek, kata kunci, pembuat, dan produser dokumen PDF secara offline.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-purple-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Edit
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
             </div>
           </>
         ) : (
@@ -239,6 +269,16 @@ export default function App() {
                 downloadBlob={downloadBlob}
                 formatBytes={formatBytes}
                 generateId={generateId}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
+
+            {activeTab === 'panel-metadata' && (
+              <EditMetadataPanel
+                notify={notify}
+                setLoader={setLoader}
+                downloadBlob={downloadBlob}
+                formatBytes={formatBytes}
                 onBack={() => setActiveTab('home')}
               />
             )}

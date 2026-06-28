@@ -261,3 +261,97 @@ export async function imagesToPdf(files, options, onProgress) {
     throw err;
   }
 }
+
+/**
+ * Reads metadata fields from a PDF file.
+ * @param {File} file PDF file
+ * @returns {Promise<Object>} Metadata fields and page count
+ */
+export async function getPdfMetadata(file) {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer, { updateMetadata: false });
+    
+    const safeGet = (getter) => {
+      try {
+        return getter() || '';
+      } catch (e) {
+        console.warn('Failed to parse PDF metadata field:', e);
+        return '';
+      }
+    };
+
+    let creationDate = '';
+    try {
+      creationDate = pdfDoc.getCreationDate() ? pdfDoc.getCreationDate().toISOString() : '';
+    } catch (e) {
+      // Silent catch - Date field is empty or malformed
+    }
+
+    let modificationDate = '';
+    try {
+      modificationDate = pdfDoc.getModificationDate() ? pdfDoc.getModificationDate().toISOString() : '';
+    } catch (e) {
+      // Silent catch - Date field is empty or malformed
+    }
+
+    return {
+      title: safeGet(() => pdfDoc.getTitle()),
+      author: safeGet(() => pdfDoc.getAuthor()),
+      subject: safeGet(() => pdfDoc.getSubject()),
+      keywords: safeGet(() => pdfDoc.getKeywords()),
+      producer: safeGet(() => pdfDoc.getProducer()),
+      creator: safeGet(() => pdfDoc.getCreator()),
+      creationDate,
+      modificationDate,
+      pageCount: pdfDoc.getPageCount()
+    };
+  } catch (err) {
+    console.error('Engine get metadata error:', err);
+    throw err;
+  }
+}
+
+/**
+ * Updates metadata fields of a PDF file and returns new PDF bytes.
+ * @param {File} file PDF file
+ * @param {Object} metadata New metadata values
+ * @returns {Promise<Uint8Array>}
+ */
+export async function updatePdfMetadata(file, metadata) {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer);
+    
+    pdfDoc.setTitle(metadata.title || '');
+    pdfDoc.setAuthor(metadata.author || '');
+    pdfDoc.setSubject(metadata.subject || '');
+    pdfDoc.setKeywords(metadata.keywords ? metadata.keywords.split(',').map(k => k.trim()).filter(Boolean) : []);
+    pdfDoc.setProducer(metadata.producer || '');
+    pdfDoc.setCreator(metadata.creator || '');
+    
+    if (metadata.creationDate) {
+      try {
+        pdfDoc.setCreationDate(new Date(metadata.creationDate));
+      } catch (e) {
+        console.warn('Failed to set creation date:', e);
+      }
+    }
+    
+    if (metadata.modificationDate) {
+      try {
+        pdfDoc.setModificationDate(new Date(metadata.modificationDate));
+      } catch (e) {
+        console.warn('Failed to set modification date:', e);
+      }
+    } else {
+      pdfDoc.setModificationDate(new Date());
+    }
+
+    return await pdfDoc.save();
+  } catch (err) {
+    console.error('Engine update metadata error:', err);
+    throw err;
+  }
+}
+
