@@ -91,18 +91,12 @@ export default function App() {
               <h1 className="text-sm font-bold text-white tracking-widest leading-none uppercase">
                 PDF<span className="text-blue-400">FDA</span>
               </h1>
-              <p className="text-[9px] text-white/40 font-semibold uppercase mt-0.5">
-                100% Client-Side &amp; Privacy-First
-              </p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-white/5 text-emerald-400 border border-emerald-500/20 shadow-xs">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
-              Offline / Aman
-            </span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold bg-white/5 text-blue-400 border border-blue-500/20 shadow-xs">
-              v{__APP_VERSION__}
+              F174
             </span>
           </div>
         </div>
@@ -486,12 +480,40 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer id="app-footer" className="bg-black/20 backdrop-blur-md border-t border-white/10 py-4 sm:py-5 mt-6 sm:mt-12 shrink-0 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:flex sm:justify-between sm:items-center space-y-2 sm:space-y-0 text-white/40">
-          <p className="text-[11px] font-mono tracking-wide uppercase">&copy; 26-05-2026 PDFFDA. Semua Hak Dilindungi.</p>
-          <p className="text-[10px] font-mono bg-white/5 text-white/50 px-3 py-1 rounded-lg border border-white/10 w-fit mx-auto sm:mx-0 shadow-inner">
-            v{__APP_VERSION__} · Lib: pdf-lib v1.17.1 &amp; pdfjs-dist v4.10.38
-          </p>
+      <footer id="app-footer" className="bg-black/40 backdrop-blur-xl border-t border-white/5 py-5 mt-8 sm:mt-16 shrink-0 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+          {/* Left: Branding & Status */}
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs text-center sm:text-left">
+            <span className="font-mono text-white/50 tracking-wide select-none">
+              &copy; 26-05-2026 <span className="text-white font-bold tracking-wider">PDF<span className="text-blue-400">FDA</span></span>.
+            </span>
+          </div>
+
+          {/* Right: Version & Creator Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {/* Version Badge */}
+            <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-mono font-bold tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-xs select-none">
+              v{__APP_VERSION__}
+            </span>
+
+            {/* Creator Badge Link */}
+            <a
+              href="https://faizaldwia.github.io/faizal-dwi-al-farizi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/5 hover:border-white/15 transition-all duration-300 shadow-inner hover:shadow-[0_0_12px_rgba(59,130,246,0.15)] group text-[11px] font-medium"
+            >
+              <span>Created by</span>
+              <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 group-hover:from-blue-300 group-hover:to-indigo-300 transition-all duration-300">
+                Faizal Dwi Al Farizi
+              </span>
+              <svg className="h-3 w-3 text-white/30 group-hover:text-blue-400 transition-colors transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 duration-350 ease-out" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+
         </div>
       </footer>
 
