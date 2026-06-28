@@ -355,3 +355,246 @@ export async function updatePdfMetadata(file, metadata) {
   }
 }
 
+/**
+ * Helper to find column split point (gutter) on a page.
+ */
+function findColumnSplitPoint(items, minX, maxX) {
+  if (maxX - minX < 200) return null;
+
+  // Search splits between 10% and 60% of the content width to capture narrow sidebars
+  const startSearch = minX + (maxX - minX) * 0.10;
+  const endSearch = minX + (maxX - minX) * 0.60;
+
+  let bestSplitX = null;
+  let minCrossing = Infinity;
+
+  // Search with higher precision (every 5 units)
+  for (let x = startSearch; x <= endSearch; x += 5) {
+    let crossingCount = 0;
+    let leftCount = 0;
+    let rightCount = 0;
+
+    items.forEach(item => {
+      const itemLeft = item.transform[4];
+      const itemRight = itemLeft + (item.width || 40);
+      
+      if (itemLeft < x && itemRight > x) {
+        crossingCount++;
+      } else if (itemRight <= x) {
+        leftCount++;
+      } else if (itemLeft >= x) {
+        rightCount++;
+      }
+    });
+
+    // Check if it's a strong vertical split point
+    if (crossingCount < minCrossing && leftCount >= 1 && rightCount >= 3) {
+      minCrossing = crossingCount;
+      bestSplitX = x;
+    }
+  }
+
+  // Allow up to 3 crossing lines to handle minor overlapping items or line decorators
+  return minCrossing <= 3 ? bestSplitX : null;
+}
+
+/**
+ * Renders list of text items in a specific coordinate bounds column.
+ */
+function renderColumnHtml(columnItems, styles, minX, maxX) {
+  if (columnItems.length === 0) return '';
+  
+  const linesMap = {};
+  columnItems.forEach(item => {
+    const y = item.transform[5];
+    let foundKey = null;
+    for (const key of Object.keys(linesMap)) {
+      if (Math.abs(parseFloat(key) - y) <= 4) {
+        foundKey = key;
+        break;
+      }
+    }
+    
+    if (foundKey !== null) {
+      linesMap[foundKey].push(item);
+    } else {
+      linesMap[y] = [item];
+    }
+  });
+
+  const sortedY = Object.keys(linesMap).sort((a, b) => parseFloat(b) - parseFloat(a));
+
+  let html = '';
+  sortedY.forEach(y => {
+    const lineItems = linesMap[y].sort((a, b) => a.transform[4] - b.transform[4]);
+    const firstItem = lineItems[0];
+    const lineStart = firstItem.transform[4];
+    const lineIndent = Math.max(0, Math.round(lineStart - minX));
+    
+    let lineSpansHtml = '';
+    
+    lineItems.forEach((item, index) => {
+      const styleKey = item.fontName;
+      const fontStyle = styles[styleKey] || {};
+      const fontFamily = fontStyle.fontFamily || 'Calibri';
+      
+      const isBold = fontFamily.toLowerCase().includes('bold') || styleKey.toLowerCase().includes('bold');
+      const isItalic = fontFamily.toLowerCase().includes('italic') || fontFamily.toLowerCase().includes('oblique') || styleKey.toLowerCase().includes('italic');
+      
+      const fontSize = Math.round(Math.abs(item.transform[0] || item.transform[3] || 11));
+      
+      let gapStyle = '';
+      if (index > 0) {
+        const prevItem = lineItems[index - 1];
+        const prevWidth = prevItem.width || (prevItem.str.length * fontSize * 0.5);
+        const prevRight = prevItem.transform[4] + prevWidth;
+        const currLeft = item.transform[4];
+        const gap = currLeft - prevRight;
+        
+        if (gap > 15) {
+          gapStyle = `margin-left: ${Math.round(gap)}pt;`;
+        } else {
+          const needsSpace = !prevItem.str.endsWith(' ') && !item.str.startsWith(' ');
+          if (needsSpace && gap > 0.5) {
+            lineSpansHtml += ' ';
+          }
+        }
+      }
+
+      const escapedStr = item.str
+        .replace(/&/g, '&amp;')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+      lineSpansHtml += `<span style="${gapStyle} font-family: ${fontFamily}, sans-serif; font-size: ${fontSize}pt; font-weight: ${isBold ? 'bold' : 'normal'}; font-style: ${isItalic ? 'italic' : 'normal'};">${escapedStr}</span>`;
+    });
+
+    html += `<p style="margin-left: ${lineIndent}pt; line-height: 1.2; margin-bottom: 4pt;">${lineSpansHtml}</p>`;
+  });
+
+  return html;
+}
+
+/**
+ * Renders all page items checking for multi-column grids.
+ */
+function renderItemsToHtml(items, styles, minX, maxX) {
+  const splitPoint = findColumnSplitPoint(items, minX, maxX);
+  
+  if (splitPoint !== null) {
+    const leftItems = [];
+    const rightItems = [];
+    
+    items.forEach(item => {
+      const itemLeft = item.transform[4];
+      const itemRight = itemLeft + (item.width || 0);
+      
+      if (itemRight <= splitPoint) {
+        leftItems.push(item);
+      } else {
+        rightItems.push(item);
+      }
+    });
+    
+    const leftHtml = renderColumnHtml(leftItems, styles, minX, splitPoint);
+    const rightHtml = renderColumnHtml(rightItems, styles, splitPoint, maxX);
+    
+    // Dynamically calculate column widths based on the split point ratio
+    let leftPercent = Math.round(((splitPoint - minX) / (maxX - minX)) * 100);
+    leftPercent = Math.max(15, Math.min(85, leftPercent)); // Clamp between 15% and 85%
+    const rightPercent = 100 - leftPercent;
+
+    return `
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 10pt;">
+        <tr valign="top">
+          <td width="${leftPercent}%" style="padding-right: 15pt;">
+            ${leftHtml}
+          </td>
+          <td width="${rightPercent}%" style="padding-left: 15pt;">
+            ${rightHtml}
+          </td>
+        </tr>
+      </table>
+    `;
+  } else {
+    return renderColumnHtml(items, styles, minX, maxX);
+  }
+}
+
+/**
+ * Converts PDF file to Word (.doc) formatted HTML Uint8Array content.
+ * @param {File} file PDF file
+ * @param {Function} onProgress Progress callback
+ * @returns {Promise<Uint8Array>}
+ */
+export async function convertPdfToWord(file, onProgress) {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+    const numPages = pdf.numPages;
+    let docHtml = '';
+
+    docHtml += '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
+    docHtml += '<head><meta charset="utf-8"><title>Converted Document</title>';
+    docHtml += `<style>
+      body { font-family: 'Calibri', 'Arial', sans-serif; font-size: 11pt; line-height: 1.15; color: #000000; margin: 1in; }
+      p { margin: 0 0 4pt 0; padding: 0; text-align: left; }
+      .page-break { page-break-before: always; }
+    </style></head><body>`;
+
+    for (let i = 1; i <= numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      const items = textContent.items;
+      const styles = textContent.styles || {};
+
+      if (items.length === 0) {
+        if (i > 1) {
+          docHtml += '<div class="page-break"></div>';
+        }
+        continue;
+      }
+
+      // Find page bounds
+      let minX = Infinity;
+      let maxX = -Infinity;
+      items.forEach(item => {
+        if (item.str && item.str.trim() !== '') {
+          const x = item.transform[4];
+          const w = item.width || 40;
+          if (x < minX) minX = x;
+          if (x + w > maxX) maxX = x + w;
+        }
+      });
+      
+      if (minX === Infinity) minX = 0;
+      if (maxX === -Infinity) maxX = 595; // A4 standard width default
+
+      const pageHtml = renderItemsToHtml(items, styles, minX, maxX);
+
+      if (i > 1) {
+        docHtml += '<div class="page-break"></div>';
+      }
+      docHtml += pageHtml;
+
+      if (onProgress) {
+        onProgress(i, numPages);
+      }
+    }
+
+    docHtml += '</body></html>';
+    
+    const encoder = new TextEncoder();
+    return encoder.encode(docHtml);
+  } catch (err) {
+    console.error('Engine convert PDF to Word error:', err);
+    throw err;
+  }
+}
+
+

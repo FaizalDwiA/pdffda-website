@@ -3,6 +3,7 @@ import MergePanel from './components/MergePanel';
 import SplitPanel from './components/SplitPanel';
 import ImageToPdfPanel from './components/ImageToPdfPanel';
 import EditMetadataPanel from './components/EditMetadataPanel';
+import PdfToWordPanel from './components/PdfToWordPanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -49,14 +50,14 @@ export default function App() {
   const downloadBlob = (uint8Array, defaultName) => {
     const blob = new Blob([uint8Array], { type: 'application/pdf' });
     const downloadUrl = URL.createObjectURL(blob);
-    
+
     const tempLink = document.createElement('a');
     tempLink.href = downloadUrl;
     tempLink.download = defaultName;
     document.body.appendChild(tempLink);
-    
+
     tempLink.click();
-    
+
     setTimeout(() => {
       document.body.removeChild(tempLink);
       URL.revokeObjectURL(downloadUrl);
@@ -74,7 +75,7 @@ export default function App() {
       {/* Header / Nav */}
       <header id="app-header" className="bg-black/40 backdrop-blur-md border-b border-white/10 sticky top-0 z-40 shadow-lg relative">
         <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-          <div 
+          <div
             onClick={() => setActiveTab('home')}
             className="flex items-center space-x-3 cursor-pointer select-none hover:opacity-90 active:scale-98 transition-all"
             title="Kembali ke Beranda"
@@ -102,7 +103,7 @@ export default function App() {
 
       {/* Main Container */}
       <main id="app-main" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col space-y-8 relative z-10">
-        
+
         {activeTab === 'home' ? (
           <>
             {/* Hero Banner Section */}
@@ -111,16 +112,16 @@ export default function App() {
                 Setiap Alat PDF yang Anda Butuhkan dalam <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Satu Tempat</span>
               </h2>
               <p className="text-sm md:text-base text-white/60 leading-relaxed max-w-2xl mx-auto">
-                Semua alat untuk memanipulasi dokumen PDF secara instan, gratis, dan 100% aman. 
+                Semua alat untuk memanipulasi dokumen PDF secara instan, gratis, dan 100% aman.
                 File diproses secara lokal langsung di peramban Anda tanpa pernah diunggah ke server mana pun.
               </p>
             </div>
 
             {/* Premium Tools Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto w-full pt-4">
-              
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto w-full pt-4">
+
               {/* Card 1: Merge PDF */}
-              <div 
+              <div
                 onClick={() => setActiveTab('panel-merge')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-orange-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-orange-950/20 group relative overflow-hidden"
               >
@@ -149,7 +150,7 @@ export default function App() {
               </div>
 
               {/* Card 2: Split PDF */}
-              <div 
+              <div
                 onClick={() => setActiveTab('panel-split')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-blue-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-blue-950/20 group relative overflow-hidden"
               >
@@ -178,7 +179,7 @@ export default function App() {
               </div>
 
               {/* Card 3: Image to PDF */}
-              <div 
+              <div
                 onClick={() => setActiveTab('panel-img')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-green-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-green-950/20 group relative overflow-hidden"
               >
@@ -207,7 +208,7 @@ export default function App() {
               </div>
 
               {/* Card 4: Edit Metadata PDF */}
-              <div 
+              <div
                 onClick={() => setActiveTab('panel-metadata')}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-purple-950/20 group relative overflow-hidden"
               >
@@ -219,7 +220,7 @@ export default function App() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-white font-bold text-lg group-hover:text-purple-400 transition-colors">Edit Metadata PDF</h3>
+                    <h3 className="text-white font-bold text-lg group-hover:text-purple-400 transition-colors">Edit Metadata</h3>
                     <p className="text-white/60 text-xs mt-2 leading-relaxed">
                       Ubah judul, penulis, subjek, kata kunci, pembuat, dan produser dokumen PDF secara offline.
                     </p>
@@ -228,6 +229,35 @@ export default function App() {
                 <div className="flex items-center justify-end pt-6 relative z-10">
                   <span className="text-purple-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
                     Mulai Edit
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 5: PDF to Word */}
+              <div
+                onClick={() => setActiveTab('panel-word')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-cyan-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-cyan-400 transition-colors">PDF ke Word (Gagal)</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Ekstrak teks dari dokumen PDF Anda secara lokal dan konversikan ke file Word (.doc) yang dapat diedit.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-cyan-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Konversi
                     <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -282,6 +312,15 @@ export default function App() {
                 onBack={() => setActiveTab('home')}
               />
             )}
+
+            {activeTab === 'panel-word' && (
+              <PdfToWordPanel
+                notify={notify}
+                setLoader={setLoader}
+                formatBytes={formatBytes}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
           </div>
         )}
 
@@ -298,11 +337,11 @@ export default function App() {
       </footer>
 
       {/* Progress Loader overlay */}
-      <LoaderOverlay 
-        show={loader.show} 
-        title={loader.title} 
-        message={loader.message} 
-        progress={loader.progress} 
+      <LoaderOverlay
+        show={loader.show}
+        title={loader.title}
+        message={loader.message}
+        progress={loader.progress}
       />
 
       {/* Toast Notifications */}
