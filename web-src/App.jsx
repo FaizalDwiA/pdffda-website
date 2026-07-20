@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logoWebp from './img/logo.webp';
 import MergePanel from './components/MergePanel';
 import SplitPanel from './components/SplitPanel';
 import ImageToPdfPanel from './components/ImageToPdfPanel';
@@ -85,7 +86,7 @@ export default function App() {
             title="Kembali ke Beranda"
           >
             <div className="flex items-center justify-center shrink-0">
-              <img className="h-8 w-8 object-contain" src="./img/logo.webp" alt="Logo" />
+              <img className="h-8 w-8 object-contain" src={logoWebp} alt="Logo" />
             </div>
             <div>
               <h1 className="text-sm font-bold text-white tracking-widest leading-none uppercase">

@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=1174 --host=0.0.0.0",
-    "build": "node -e \"const fs = require('fs'); ['assets', 'index.html', 'index.css', 'index.js'].forEach(f => { if (fs.existsSync(f)) { fs.rmSync(f, {recursive: true, force: true}); } })\" && vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "clean": "node -e \"const fs = require('fs'); ['assets', 'index.html', 'index.css', 'index.js'].forEach(f => { if (fs.existsSync(f)) { fs.rmSync(f, {recursive: true, force: true}); } })\"",
+    "clean": "node -e \"import('fs').then(fs => { if (fs.existsSync('docs')) fs.rmSync('docs', {recursive: true, force: true}); })\"",
     "lint": "echo 'No linting needed for vanilla js'",
     "release": "release-it --no-git.requireCleanWorkingDir"
   },

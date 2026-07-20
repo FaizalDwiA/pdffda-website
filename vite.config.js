@@ -18,8 +18,8 @@ export default defineConfig({
   root: 'web-src',
   base: './',
   build: {
-    outDir: '../',
-    emptyOutDir: false
+    outDir: '../docs',
+    emptyOutDir: true
   },
   server: {
     port: 1174,
