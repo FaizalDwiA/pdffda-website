@@ -132,7 +132,8 @@ export default function ImageToPdfPanel({ notify, setLoader, downloadBlob, gener
     }));
   };
 
-  const orOptText = imgOptions.orientation === 'portrait' ? 'Potret' : 'Lansekap';
+  const pageSizeText = imgOptions.pageSize === 'auto' ? 'Sesuai Gambar (Auto)' : imgOptions.pageSize;
+  const orOptText = imgOptions.pageSize === 'auto' ? 'Auto' : imgOptions.orientation === 'portrait' ? 'Potret' : 'Lansekap';
   const mgOptText =
     imgOptions.margin === 'none'
       ? 'Tanpa Margin'
@@ -212,36 +213,55 @@ export default function ImageToPdfPanel({ notify, setLoader, downloadBlob, gener
               {/* Page Size Selection */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-white/70">Ukuran Kertas</label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleOptionChange('pageSize', 'A4')}
+                      className={`px-3 py-1.5 text-xs rounded-lg text-center cursor-pointer transition-all border ${
+                        imgOptions.pageSize === 'A4'
+                          ? 'border-blue-500 bg-blue-600/30 text-white font-semibold shadow-sm'
+                          : 'border-white/10 bg-white/5 text-white/70 font-medium hover:bg-white/10'
+                      }`}
+                    >
+                      A4 (210 &times; 297mm)
+                    </button>
+                    <button
+                      onClick={() => handleOptionChange('pageSize', 'Letter')}
+                      className={`px-3 py-1.5 text-xs rounded-lg text-center cursor-pointer transition-all border ${
+                        imgOptions.pageSize === 'Letter'
+                          ? 'border-blue-500 bg-blue-600/30 text-white font-semibold shadow-sm'
+                          : 'border-white/10 bg-white/5 text-white/70 font-medium hover:bg-white/10'
+                      }`}
+                    >
+                      Letter (8.5 &times; 11")
+                    </button>
+                  </div>
                   <button
-                    onClick={() => handleOptionChange('pageSize', 'A4')}
-                    className={`px-3 py-1.5 text-xs rounded-lg text-center cursor-pointer transition-all border ${
-                      imgOptions.pageSize === 'A4'
+                    onClick={() => handleOptionChange('pageSize', 'auto')}
+                    className={`w-full px-3 py-1.5 text-xs rounded-lg text-center cursor-pointer transition-all border flex items-center justify-center gap-1.5 ${
+                      imgOptions.pageSize === 'auto'
                         ? 'border-blue-500 bg-blue-600/30 text-white font-semibold shadow-sm'
                         : 'border-white/10 bg-white/5 text-white/70 font-medium hover:bg-white/10'
                     }`}
+                    title="Dimensi halaman PDF menyesuaikan resolusi asli gambar (bebas / gambar panjang)"
                   >
-                    A4 (210 &times; 297mm)
-                  </button>
-                  <button
-                    onClick={() => handleOptionChange('pageSize', 'Letter')}
-                    className={`px-3 py-1.5 text-xs rounded-lg text-center cursor-pointer transition-all border ${
-                      imgOptions.pageSize === 'Letter'
-                        ? 'border-blue-500 bg-blue-600/30 text-white font-semibold shadow-sm'
-                        : 'border-white/10 bg-white/5 text-white/70 font-medium hover:bg-white/10'
-                    }`}
-                  >
-                    Letter (8.5 &times; 11")
+                    <span>Sesuai Gambar (Panjang / Auto)</span>
                   </button>
                 </div>
               </div>
 
               {/* Page Orientation Selection */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-white/70">Orientasi Kertas</label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex justify-between items-center">
+                  <label className="block text-xs font-semibold text-white/70">Orientasi Kertas</label>
+                  {imgOptions.pageSize === 'auto' && (
+                    <span className="text-[10px] font-medium text-blue-400 font-mono">Auto (Mengikuti Gambar)</span>
+                  )}
+                </div>
+                <div className={`grid grid-cols-2 gap-2 ${imgOptions.pageSize === 'auto' ? 'opacity-40 pointer-events-none' : ''}`}>
                   <button
                     onClick={() => handleOptionChange('orientation', 'portrait')}
+                    disabled={imgOptions.pageSize === 'auto'}
                     className={`px-3 py-1.5 text-xs rounded-lg text-center cursor-pointer transition-all border ${
                       imgOptions.orientation === 'portrait'
                         ? 'border-blue-500 bg-blue-600/30 text-white font-semibold shadow-sm'
@@ -252,6 +272,7 @@ export default function ImageToPdfPanel({ notify, setLoader, downloadBlob, gener
                   </button>
                   <button
                     onClick={() => handleOptionChange('orientation', 'landscape')}
+                    disabled={imgOptions.pageSize === 'auto'}
                     className={`px-3 py-1.5 text-xs rounded-lg text-center cursor-pointer transition-all border ${
                       imgOptions.orientation === 'landscape'
                         ? 'border-blue-500 bg-blue-600/30 text-white font-semibold shadow-sm'
@@ -400,7 +421,7 @@ export default function ImageToPdfPanel({ notify, setLoader, downloadBlob, gener
                   <span className="font-bold text-blue-400 text-sm">{imgFiles.length}</span> Gambar &bull;{' '}
                   <span className="text-white/40 font-mono text-[11px]">Kertas: </span>
                   <span className="font-bold text-blue-400 text-sm">
-                    {imgOptions.pageSize} {orOptText} ({mgOptText})
+                    {pageSizeText} {orOptText} ({mgOptText})
                   </span>
                 </div>
                 <button

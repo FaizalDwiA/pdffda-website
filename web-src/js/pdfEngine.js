@@ -250,17 +250,9 @@ export async function imagesToPdf(files, options, onProgress) {
       large: 24
     };
 
+    const isAutoPageSize = options.pageSize === 'auto';
     const paper = PAGE_SIZES[options.pageSize] || PAGE_SIZES.A4;
     const marginSize = MARGIN_SIZES[options.margin] !== undefined ? MARGIN_SIZES[options.margin] : 0;
-
-    let targetWidth = paper.width;
-    let targetHeight = paper.height;
-
-    // Flip dimensions if landscape setting is enabled
-    if (options.orientation === 'landscape') {
-      targetWidth = paper.height;
-      targetHeight = paper.width;
-    }
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -268,6 +260,21 @@ export async function imagesToPdf(files, options, onProgress) {
       // Convert image file safely to high-quality JPEG bytes
       const jpegBytes = await fileToJpgBytes(file);
       const embeddedImage = await pdfDoc.embedJpg(jpegBytes);
+
+      let targetWidth, targetHeight;
+      if (isAutoPageSize) {
+        targetWidth = embeddedImage.width + (2 * marginSize);
+        targetHeight = embeddedImage.height + (2 * marginSize);
+      } else {
+        targetWidth = paper.width;
+        targetHeight = paper.height;
+
+        // Flip dimensions if landscape setting is enabled
+        if (options.orientation === 'landscape') {
+          targetWidth = paper.height;
+          targetHeight = paper.width;
+        }
+      }
 
       // Create new page inside PDF matching target page sizes
       const page = pdfDoc.addPage([targetWidth, targetHeight]);
