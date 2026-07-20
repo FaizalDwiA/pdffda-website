@@ -11,6 +11,7 @@ import WatermarkPanel from './components/WatermarkPanel';
 import PdfToImagePanel from './components/PdfToImagePanel';
 import CompressPdfPanel from './components/CompressPdfPanel';
 import EncryptPdfPanel from './components/EncryptPdfPanel';
+import DecryptPdfPanel from './components/DecryptPdfPanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -443,6 +444,35 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Card 12: Buka Kunci PDF */}
+              <div
+                onClick={() => setActiveTab('panel-decrypt')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-amber-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-amber-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-amber-400 transition-colors">Buka Kunci PDF</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Hapus kata sandi proteksi dan buka kunci dokumen PDF Anda secara 100% offline.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-amber-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Buka Kunci
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
             </div>
           </>
         ) : (
@@ -548,6 +578,16 @@ export default function App() {
 
             {activeTab === 'panel-encrypt' && (
               <EncryptPdfPanel
+                notify={notify}
+                setLoader={setLoader}
+                downloadBlob={downloadBlob}
+                formatBytes={formatBytes}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
+
+            {activeTab === 'panel-decrypt' && (
+              <DecryptPdfPanel
                 notify={notify}
                 setLoader={setLoader}
                 downloadBlob={downloadBlob}

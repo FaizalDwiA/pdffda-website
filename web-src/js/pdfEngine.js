@@ -1111,5 +1111,79 @@ export async function encryptPdf(file, options = {}, onProgress) {
   }
 }
 
+/**
+ * Decrypts / removes password protection from a PDF file.
+ * @param {File} file Encrypted PDF file
+ * @param {Object} options Decryption options containing password
+ * @param {Function} onProgress Progress callback (current, total)
+ * @returns {Promise<Uint8Array>} Unlocked PDF bytes
+ */
+export async function decryptPdf(file, options = {}, onProgress) {
+  const { password } = options;
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({
+      data: arrayBuffer,
+      password: password || '',
+    });
+
+    let pdf;
+    try {
+      pdf = await loadingTask.promise;
+    } catch (loadErr) {
+      if (loadErr.name === 'PasswordException') {
+        throw new Error('Kata sandi yang Anda masukkan salah. Harap periksa kembali kata sandi PDF Anda.');
+      }
+      throw loadErr;
+    }
+
+    const numPages = pdf.numPages;
+    const unlockedPdfDoc = await PDFDocument.create();
+
+    for (let i = 1; i <= numPages; i++) {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 2.0 });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const context = canvas.getContext('2d');
+
+      context.fillStyle = '#FFFFFF';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      await page.render({ canvasContext: context, viewport }).promise;
+
+      const jpegBlob = await new Promise((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.92);
+      });
+
+      const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+      const embeddedJpg = await unlockedPdfDoc.embedJpg(jpegBytes);
+
+      const origViewport = page.getViewport({ scale: 1.0 });
+      const newPage = unlockedPdfDoc.addPage([origViewport.width, origViewport.height]);
+
+      newPage.drawImage(embeddedJpg, {
+        x: 0,
+        y: 0,
+        width: origViewport.width,
+        height: origViewport.height,
+      });
+
+      if (onProgress) {
+        onProgress(i, numPages);
+      }
+    }
+
+    return await unlockedPdfDoc.save();
+  } catch (err) {
+    console.error('Engine decryptPdf error:', err);
+    throw err;
+  }
+}
+
+
 
 

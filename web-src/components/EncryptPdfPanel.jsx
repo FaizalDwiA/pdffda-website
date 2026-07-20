@@ -15,8 +15,8 @@ export default function EncryptPdfPanel({ notify, setLoader, downloadBlob, forma
   const [ownerPassword, setOwnerPassword] = useState('');
   const [showOwnerPassword, setShowOwnerPassword] = useState(false);
   const [allowPrinting, setAllowPrinting] = useState(true);
-  const [allowCopying, setAllowCopying] = useState(false);
-  const [allowModifying, setAllowModifying] = useState(false);
+  const [allowCopying, setAllowCopying] = useState(true);
+  const [allowModifying, setAllowModifying] = useState(true);
   const [isDragActive, setIsDragActive] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -74,6 +74,9 @@ export default function EncryptPdfPanel({ notify, setLoader, downloadBlob, forma
     setConfirmPassword('');
     setUseCustomOwnerPassword(false);
     setOwnerPassword('');
+    setAllowPrinting(true);
+    setAllowCopying(true);
+    setAllowModifying(true);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
