@@ -1,9 +1,11 @@
 import React, { useRef, useState } from 'react';
+import JSZip from 'jszip';
 import { imagesToPdf } from '../js/pdfEngine.js';
 
 export default function ImageToPdfPanel({ notify, setLoader, downloadBlob, generateId, onBack }) {
   const [imgFiles, setImgFiles] = useState([]);
   const [imgOptions, setImgOptions] = useState({
+    mergeMode: 'separate', // 'separate' (Default) | 'merge'
     pageSize: 'A4',
     orientation: 'portrait',
     margin: 'none',
@@ -101,22 +103,79 @@ export default function ImageToPdfPanel({ notify, setLoader, downloadBlob, gener
       return;
     }
 
-    setLoader({ show: true, title: 'Mengonversi Gambar', message: 'Menyesuaikan dimensi resolusi gambaran...', progress: 10 });
+    setLoader({ show: true, title: 'Mengonversi Gambar', message: 'Memulai proses konversi...', progress: 5 });
 
     try {
-      const filesArr = imgFiles.map((i) => i.file);
-      const compiledPdf = await imagesToPdf(filesArr, imgOptions, (curr, total) => {
-        const percent = (curr / total) * 100;
-        setLoader({
-          show: true,
-          title: 'Menyalin Halaman',
-          message: `Melukis gambar ${curr} dari ${total} halaman ke berkas...`,
-          progress: percent,
-        });
-      });
+      if (imgOptions.mergeMode === 'separate') {
+        if (imgFiles.length === 1) {
+          // 1 Gambar -> Konversi tunggal dengan nama asli gambar (.pdf)
+          const item = imgFiles[0];
+          const pdfBytes = await imagesToPdf([item.file], imgOptions, (curr, total) => {
+            setLoader({
+              show: true,
+              title: 'Mengonversi Gambar',
+              message: `Menyalin file ${item.filename}...`,
+              progress: 80,
+            });
+          });
 
-      downloadBlob(compiledPdf, 'gambar_pdffda.pdf');
-      notify('success', 'Sukses Konversi', 'PDF rancangan gambar Anda berhasil dipersiapkan.');
+          const baseName = item.filename.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+          const outName = `${baseName}.pdf`;
+          downloadBlob(pdfBytes, outName);
+          notify('success', 'Sukses Konversi', `Berkas ${outName} berhasil dipersiapkan.`);
+        } else {
+          // Banyak Gambar -> Konversi terpisah per gambar & unduh ZIP
+          const zip = new JSZip();
+
+          for (let i = 0; i < imgFiles.length; i++) {
+            const item = imgFiles[i];
+            const percent = Math.round(((i + 1) / imgFiles.length) * 85);
+            setLoader({
+              show: true,
+              title: 'Mengonversi Gambar Terpisah',
+              message: `Memproses ${i + 1} dari ${imgFiles.length}: ${item.filename}...`,
+              progress: percent,
+            });
+
+            const pdfBytes = await imagesToPdf([item.file], imgOptions);
+            const baseName = item.filename.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+            const outName = `${baseName}.pdf`;
+
+            zip.file(outName, pdfBytes);
+          }
+
+          setLoader({ show: true, title: 'Membuat ZIP', message: 'Mengemas semua file PDF...', progress: 92 });
+          const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 4 } });
+
+          const downloadUrl = URL.createObjectURL(zipBlob);
+          const tempLink = document.createElement('a');
+          tempLink.href = downloadUrl;
+          tempLink.download = 'gambar_pdf_terpisah.zip';
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          setTimeout(() => {
+            document.body.removeChild(tempLink);
+            URL.revokeObjectURL(downloadUrl);
+          }, 300);
+
+          notify('success', 'Sukses Konversi', `${imgFiles.length} berkas PDF berhasil dikemas ke dalam ZIP.`);
+        }
+      } else {
+        // Mode Gabungkan (1 File PDF)
+        const filesArr = imgFiles.map((i) => i.file);
+        const compiledPdf = await imagesToPdf(filesArr, imgOptions, (curr, total) => {
+          const percent = (curr / total) * 100;
+          setLoader({
+            show: true,
+            title: 'Menyalin Halaman',
+            message: `Melukis gambar ${curr} dari ${total} halaman ke berkas...`,
+            progress: percent,
+          });
+        });
+
+        downloadBlob(compiledPdf, 'gambar_pdffda.pdf');
+        notify('success', 'Sukses Konversi', 'PDF rancangan gambar Anda berhasil dipersiapkan.');
+      }
     } catch (err) {
       console.error(err);
       notify('error', 'Kesalahan Konversi', 'Sistem gagal mengekstrak binary data dari gambar ke lembaran PDF.');
@@ -209,6 +268,37 @@ export default function ImageToPdfPanel({ notify, setLoader, downloadBlob, gener
               <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-widest leading-none">
                 Pengaturan Layout Halaman
               </h4>
+
+              {/* Output Mode Selection (Separate vs Merge) */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-white/70">Mode Penggabungan</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => handleOptionChange('mergeMode', 'separate')}
+                    className={`px-2.5 py-2 text-xs rounded-lg text-center cursor-pointer transition-all border flex flex-col items-center justify-center ${
+                      imgOptions.mergeMode === 'separate'
+                        ? 'border-blue-500 bg-blue-600/30 text-white font-semibold shadow-sm'
+                        : 'border-white/10 bg-white/5 text-white/70 font-medium hover:bg-white/10'
+                    }`}
+                    title="Setiap gambar dikonversi menjadi berkas PDF terpisah dengan nama aslinya"
+                  >
+                    <span>Terpisah (Default)</span>
+                    <span className="text-[9px] font-normal opacity-60">1 Gambar = 1 PDF</span>
+                  </button>
+                  <button
+                    onClick={() => handleOptionChange('mergeMode', 'merge')}
+                    className={`px-2.5 py-2 text-xs rounded-lg text-center cursor-pointer transition-all border flex flex-col items-center justify-center ${
+                      imgOptions.mergeMode === 'merge'
+                        ? 'border-blue-500 bg-blue-600/30 text-white font-semibold shadow-sm'
+                        : 'border-white/10 bg-white/5 text-white/70 font-medium hover:bg-white/10'
+                    }`}
+                    title="Semua gambar digabungkan menjadi 1 file PDF tunggal"
+                  >
+                    <span>Gabungkan Semua</span>
+                    <span className="text-[9px] font-normal opacity-60">Semua = 1 PDF</span>
+                  </button>
+                </div>
+              </div>
 
               {/* Page Size Selection */}
               <div className="space-y-1.5">
@@ -419,8 +509,12 @@ export default function ImageToPdfPanel({ notify, setLoader, downloadBlob, gener
               <div className="bg-black/30 p-4 border-t border-white/10 flex justify-between items-center gap-4 shrink-0">
                 <div className="text-xs font-mono text-white/40">
                   <span className="font-bold text-blue-400 text-sm">{imgFiles.length}</span> Gambar &bull;{' '}
-                  <span className="text-white/40 font-mono text-[11px]">Kertas: </span>
-                  <span className="font-bold text-blue-400 text-sm">
+                  <span className="text-white/40 font-mono text-[11px]">Mode: </span>
+                  <span className="font-bold text-emerald-400 text-xs">
+                    {imgOptions.mergeMode === 'separate' ? 'Terpisah (Nama Asli)' : 'Gabungan (1 PDF)'}
+                  </span>{' '}
+                  &bull;{' '}
+                  <span className="font-bold text-blue-400 text-xs">
                     {pageSizeText} {orOptText} ({mgOptText})
                   </span>
                 </div>
@@ -428,7 +522,11 @@ export default function ImageToPdfPanel({ notify, setLoader, downloadBlob, gener
                   onClick={runImageToPdf}
                   className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-2.5 rounded-lg inline-flex items-center space-x-1.5 transition-all cursor-pointer shadow-lg shadow-blue-900/40"
                 >
-                  <span>Persiapkan &amp; Simpan</span>
+                  <span>
+                    {imgOptions.mergeMode === 'separate' && imgFiles.length > 1
+                      ? `Persiapkan & Unduh ZIP (${imgFiles.length} PDF)`
+                      : 'Persiapkan & Simpan'}
+                  </span>
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
