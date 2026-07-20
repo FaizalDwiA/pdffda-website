@@ -12,6 +12,7 @@ import PdfToImagePanel from './components/PdfToImagePanel';
 import CompressPdfPanel from './components/CompressPdfPanel';
 import EncryptPdfPanel from './components/EncryptPdfPanel';
 import DecryptPdfPanel from './components/DecryptPdfPanel';
+import RotatePdfPanel from './components/RotatePdfPanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -473,6 +474,35 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Card 13: Putar PDF */}
+              <div
+                onClick={() => setActiveTab('panel-rotate')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-indigo-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-indigo-400 transition-colors">Putar PDF</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Putar posisi halaman PDF searah atau berlawanan jarum jam per halaman secara 100% offline.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-indigo-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Putar
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
             </div>
           </>
         ) : (
@@ -588,6 +618,16 @@ export default function App() {
 
             {activeTab === 'panel-decrypt' && (
               <DecryptPdfPanel
+                notify={notify}
+                setLoader={setLoader}
+                downloadBlob={downloadBlob}
+                formatBytes={formatBytes}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
+
+            {activeTab === 'panel-rotate' && (
+              <RotatePdfPanel
                 notify={notify}
                 setLoader={setLoader}
                 downloadBlob={downloadBlob}

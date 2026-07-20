@@ -1184,6 +1184,39 @@ export async function decryptPdf(file, options = {}, onProgress) {
   }
 }
 
+/**
+ * Rotates pages of a PDF file according to a rotation map/array.
+ * @param {File} file Source PDF file
+ * @param {Array<number>} pageRotations Array of rotation angles in degrees per page index (0-based)
+ * @param {Function} onProgress Progress callback (current, total)
+ * @returns {Promise<Uint8Array>} Rotated PDF bytes
+ */
+export async function rotatePdf(file, pageRotations = [], onProgress) {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer);
+    const pages = pdfDoc.getPages();
+
+    pages.forEach((page, index) => {
+      const addedRotation = pageRotations[index] || 0;
+      if (addedRotation !== 0) {
+        const currentRotation = page.getRotation().angle || 0;
+        const finalAngle = (currentRotation + addedRotation) % 360;
+        page.setRotation(degrees((finalAngle + 360) % 360));
+      }
+      if (onProgress) {
+        onProgress(index + 1, pages.length);
+      }
+    });
+
+    return await pdfDoc.save();
+  } catch (err) {
+    console.error('Engine rotatePdf error:', err);
+    throw err;
+  }
+}
+
+
 
 
 
