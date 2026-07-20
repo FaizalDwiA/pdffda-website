@@ -940,5 +940,83 @@ export async function addWatermarkToPdf(pdfFile, watermarks, options = {}) {
   }
 }
 
+/**
+ * Compresses a PDF file by re-rendering pages with controlled DPI scaling and JPEG quality.
+ * @param {File} file Source PDF file
+ * @param {Object} options Options object containing level ('extreme' | 'recommended' | 'less')
+ * @param {Function} onProgress Progress callback (current, total)
+ * @returns {Promise<Uint8Array>} Compressed PDF bytes
+ */
+export async function compressPdf(file, options = {}, onProgress) {
+  const { level = 'recommended' } = options;
+
+  let scale = 1.5;
+  let quality = 0.70;
+
+  if (level === 'extreme') {
+    scale = 1.0;
+    quality = 0.50;
+  } else if (level === 'recommended') {
+    scale = 1.5;
+    quality = 0.70;
+  } else if (level === 'less') {
+    scale = 2.0;
+    quality = 0.85;
+  }
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+    const numPages = pdf.numPages;
+
+    const compressedPdfDoc = await PDFDocument.create();
+
+    for (let i = 1; i <= numPages; i++) {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const context = canvas.getContext('2d');
+
+      // White background for JPEG
+      context.fillStyle = '#FFFFFF';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      await page.render({ canvasContext: context, viewport }).promise;
+
+      // Convert page canvas to JPEG Blob
+      const jpegBlob = await new Promise((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
+      });
+
+      const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+      const embeddedJpg = await compressedPdfDoc.embedJpg(jpegBytes);
+
+      // Page dimensions matching original page viewport at scale 1.0
+      const origViewport = page.getViewport({ scale: 1.0 });
+      const newPage = compressedPdfDoc.addPage([origViewport.width, origViewport.height]);
+
+      newPage.drawImage(embeddedJpg, {
+        x: 0,
+        y: 0,
+        width: origViewport.width,
+        height: origViewport.height,
+      });
+
+      if (onProgress) {
+        onProgress(i, numPages);
+      }
+    }
+
+    return await compressedPdfDoc.save();
+  } catch (err) {
+    console.error('Engine compressPdf error:', err);
+    throw err;
+  }
+}
+
 
 

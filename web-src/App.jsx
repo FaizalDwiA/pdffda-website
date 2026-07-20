@@ -9,6 +9,7 @@ import SignPdfPanel from './components/SignPdfPanel';
 import EditPdfPanel from './components/EditPdfPanel';
 import WatermarkPanel from './components/WatermarkPanel';
 import PdfToImagePanel from './components/PdfToImagePanel';
+import CompressPdfPanel from './components/CompressPdfPanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -383,6 +384,35 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Card 10: Kompres PDF */}
+              <div
+                onClick={() => setActiveTab('panel-compress')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-emerald-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-emerald-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-emerald-400 transition-colors">Kompres PDF</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Kecilkan ukuran file PDF Anda dengan mempertahankan kualitas visual terbaik secara 100% offline.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-emerald-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Kompres
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
             </div>
           </>
         ) : (
@@ -471,6 +501,16 @@ export default function App() {
               <PdfToImagePanel
                 notify={notify}
                 setLoader={setLoader}
+                formatBytes={formatBytes}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
+
+            {activeTab === 'panel-compress' && (
+              <CompressPdfPanel
+                notify={notify}
+                setLoader={setLoader}
+                downloadBlob={downloadBlob}
                 formatBytes={formatBytes}
                 onBack={() => setActiveTab('home')}
               />
