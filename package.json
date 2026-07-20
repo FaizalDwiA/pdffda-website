@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
+    "@pdfsmaller/pdf-encrypt": "^1.0.2",
+    "@pdfsmaller/pdf-encrypt-lite": "^1.0.2",
     "@tailwindcss/vite": "^4.1.14",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",

@@ -5,6 +5,7 @@
 
 import { PDFDocument, rgb, StandardFonts, degrees } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist';
+import { encryptPDF } from '@pdfsmaller/pdf-encrypt';
 
 // Configure the pdfjs worker to run seamlessly from Cloudflare CDN matching the precise version installed.
 const PDFJS_VERSION = '4.10.38';
@@ -1014,6 +1015,98 @@ export async function compressPdf(file, options = {}, onProgress) {
     return await compressedPdfDoc.save();
   } catch (err) {
     console.error('Engine compressPdf error:', err);
+    throw err;
+  }
+}
+
+/**
+ * Encrypts / password-protects a PDF file.
+ * @param {File} file Source PDF file
+ * @param {Object} options Encryption options containing password, ownerPassword, preventCopy
+ * @param {Function} onProgress Progress callback (current, total)
+ * @returns {Promise<Uint8Array>} Encrypted PDF bytes
+ */
+export async function encryptPdf(file, options = {}, onProgress) {
+  const { password, ownerPassword, preventCopy, allowModifying = false, allowPrinting = true } = options;
+
+  if (!password) {
+    throw new Error('Kata sandi tidak boleh kosong.');
+  }
+
+  try {
+    let sourcePdfBytes;
+
+    if (preventCopy) {
+      // Flatten text by rendering pages to High-DPI canvas images to prevent 100% of text copying
+      const arrayBuffer = await file.arrayBuffer();
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+      const numPages = pdf.numPages;
+
+      const flattenedPdfDoc = await PDFDocument.create();
+
+      for (let i = 1; i <= numPages; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 2.0 }); // 2.0x scale for crisp high-resolution text
+
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const context = canvas.getContext('2d');
+
+        context.fillStyle = '#FFFFFF';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        await page.render({ canvasContext: context, viewport }).promise;
+
+        const jpegBlob = await new Promise((resolve) => {
+          canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.90);
+        });
+
+        const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+        const embeddedJpg = await flattenedPdfDoc.embedJpg(jpegBytes);
+
+        const origViewport = page.getViewport({ scale: 1.0 });
+        const newPage = flattenedPdfDoc.addPage([origViewport.width, origViewport.height]);
+
+        newPage.drawImage(embeddedJpg, {
+          x: 0,
+          y: 0,
+          width: origViewport.width,
+          height: origViewport.height,
+        });
+
+        if (onProgress) {
+          onProgress(i, numPages);
+        }
+      }
+
+      sourcePdfBytes = await flattenedPdfDoc.save();
+    } else {
+      const arrayBuffer = await file.arrayBuffer();
+      sourcePdfBytes = new Uint8Array(arrayBuffer);
+    }
+
+    // Separate owner password when allowModifying is false so PDF editors enforce editing restrictions
+    const effectiveOwnerPassword = ownerPassword
+      ? ownerPassword
+      : allowModifying
+      ? password
+      : password + '_PDFFDA_SECURE_OWNER_' + Math.random().toString(36).substring(2, 9);
+
+    const encryptedBytes = await encryptPDF(sourcePdfBytes, password, {
+      ownerPassword: effectiveOwnerPassword,
+      algorithm: 'AES-256',
+      allowPrinting: allowPrinting,
+      allowModifying: allowModifying,
+      allowCopying: !preventCopy,
+      allowAnnotating: allowModifying,
+      allowFillingForms: allowModifying,
+    });
+
+    return encryptedBytes;
+  } catch (err) {
+    console.error('Engine encryptPdf error:', err);
     throw err;
   }
 }

@@ -10,6 +10,7 @@ import EditPdfPanel from './components/EditPdfPanel';
 import WatermarkPanel from './components/WatermarkPanel';
 import PdfToImagePanel from './components/PdfToImagePanel';
 import CompressPdfPanel from './components/CompressPdfPanel';
+import EncryptPdfPanel from './components/EncryptPdfPanel';
 import LoaderOverlay from './components/LoaderOverlay';
 import ToastContainer from './components/ToastContainer';
 
@@ -413,6 +414,35 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Card 11: Kunci PDF */}
+              <div
+                onClick={() => setActiveTab('panel-encrypt')}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 hover:border-rose-500/50 hover:bg-white/10 rounded-2xl p-6 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-rose-950/20 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="space-y-4 relative z-10">
+                  <div className="h-12 w-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-lg group-hover:text-rose-400 transition-colors">Kunci PDF</h3>
+                    <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                      Proteksi berkas PDF Anda dengan kata sandi yang aman dan enkripsi kuat secara 100% offline.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end pt-6 relative z-10">
+                  <span className="text-rose-400 text-xs font-semibold inline-flex items-center gap-1 group-hover:underline">
+                    Mulai Kunci
+                    <svg className="h-3 w-3 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
             </div>
           </>
         ) : (
@@ -508,6 +538,16 @@ export default function App() {
 
             {activeTab === 'panel-compress' && (
               <CompressPdfPanel
+                notify={notify}
+                setLoader={setLoader}
+                downloadBlob={downloadBlob}
+                formatBytes={formatBytes}
+                onBack={() => setActiveTab('home')}
+              />
+            )}
+
+            {activeTab === 'panel-encrypt' && (
+              <EncryptPdfPanel
                 notify={notify}
                 setLoader={setLoader}
                 downloadBlob={downloadBlob}
